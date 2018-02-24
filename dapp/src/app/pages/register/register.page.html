@@ -1,0 +1,60 @@
+<h2 class="mt-2 mb-3">Register</h2>
+<div class="card">
+    <div class="card-body">
+
+
+        <form (ngSubmit)="step = 2" *ngIf="step == 1">
+
+            <div class="form-group">
+                <label>Mnemonic</label>
+                <input type="text" class="form-control" onclick="this.select()" value="{{seedPhrase}}" readonly>
+            </div>
+            <div class="form-group">
+                <b>Save your <span class="text-danger">Mnemonic!</span></b> - it's required, to play this game.<br>
+                <b>Do not lose it!</b> - It cannot be recovered.<br>
+            </div>
+
+            <button mat-raised-button color="warn" class="float-right" type="submit">I understand. Continue</button>
+        </form>
+
+
+        <form (ngSubmit)="create()" *ngIf="step == 2" [formGroup]="fg">
+
+            <div class="form-group">
+                <label>Confirm mnemonic</label>
+                <input type="text" class="form-control" formControlName="confirmMnemonic">
+
+                <small *ngIf="confirmMnemonic.invalid && confirmMnemonic.touched" class="form-text text-danger">
+                    <span *ngIf="!confirmMnemonic.errors.MutchPassword">
+                            Mnemonic not match.
+                    </span>
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" formControlName="password">
+
+                <small *ngIf="password.invalid && password.touched" class="form-text text-danger">
+                    <span *ngIf="password.errors.required || password.errors.minlength">
+                        Password must be at least 8 characters long.
+                    </span>
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" formControlName="confirmPassword">
+
+                <small *ngIf="confirmPassword.invalid && confirmPassword.touched" class="form-text text-danger">
+                  <span *ngIf="!confirmPassword.errors.MutchPassword">
+                      Password not match.
+                  </span>
+                </small>
+            </div>
+
+            <button mat-raised-button color="primary" class="float-right" type="submit" [disabled]="!fg.valid">Create</button>
+            <button mat-raised-button (click)="step = 2" class="float-right mr-2" tabindex="-1" color="basic">Back</button>
+        </form>
+    </div>
+</div>

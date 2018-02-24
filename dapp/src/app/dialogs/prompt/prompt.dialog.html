@@ -1,0 +1,23 @@
+<form (ngSubmit)="send()" [formGroup]="fg">
+    <mat-dialog-content>
+        <div class="form-group">
+            <label>{{data.text}}</label>
+            <input type="{{data.inputType}}" class=" form-control " formControlName="answer">
+
+            <small *ngIf="answer.invalid && answer.touched" class="form-text text-danger">
+                <span *ngIf="answer.errors.required">Required</span>
+
+                <span *ngIf="answer.errors.minlength">Minumum {{answer.errors.minlength.requiredLength}} characters long.</span>
+
+                <span *ngIf="answer.errors.maxlength">Maximum {{answer.errors.maxlength.requiredLength}} characters long.</span>
+
+                <span *ngIf="!answer.errors.required && !answer.errors.maxlength && !answer.errors.maxlength">Unsupported error.</span>
+            </small>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-raised-button color="basic" (click)="cancel()" *ngIf="!data.cancelable">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!fg.valid">Ok</button>
+    </mat-dialog-actions>
+</form>

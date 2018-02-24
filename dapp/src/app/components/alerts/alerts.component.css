@@ -1,0 +1,21 @@
+#alerts-container {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 500px;
+    z-index: 100000;
+}
+
+.alert-text {
+    white-space: pre-line;
+}
+
+.alert-dismissible {
+    padding-right: 45px;
+}
+
+.alert-dismissible .close {
+    font-size: 1.4rem;
+    padding: 0.75rem 0.9rem;
+}
