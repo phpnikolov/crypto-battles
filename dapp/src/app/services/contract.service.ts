@@ -37,7 +37,7 @@ export class ContractService {
 
   public getPlayer(addr: string): Promise<Player> {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getPlayer(this.wallet.getAddress()).call()
+      this.contract.methods.getPlayer(addr).call()
         .then(data => {
           let player:Player = {
             username: Utils.hexToString(data['_username']),
@@ -53,7 +53,7 @@ export class ContractService {
           }
 
           resolve(player);
-        })
+        }).catch(reject);
     });
   }
 

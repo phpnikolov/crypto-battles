@@ -28,6 +28,7 @@ import { WalletService } from './services/wallet.service';
 // Pages
 import { LoginPage } from './pages/login/login.page';
 import { PageNotFoundPage } from './pages/page-not-found/page-not-found.page';
+import { GamePage } from './pages/game/game.page';
 import { CastlePage } from './pages/castle/castle.page';
 import { RegisterPage } from './pages/register/register.page';
 import { DialogService } from './services/dialog.service';
@@ -46,16 +47,28 @@ const appRoutes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'castle',
-    component: CastlePage,
+    path: 'login',
+    component: LoginPage
   },
   {
     path: 'register',
     component: RegisterPage
   },
   {
-    path: 'login',
-    component: LoginPage
+    path: 'game',
+    component: GamePage,
+    children: [
+      {
+        path: '',
+        redirectTo: 'castle',
+        pathMatch: 'full'
+      },
+      {
+        path: 'castle',
+        component: CastlePage,
+      },
+     
+    ]
   },
   {
     path: '**',
@@ -76,28 +89,29 @@ StorageService.namespace = 'crypto-battles';
     CastlePage,
     PageNotFoundPage,
     PromptDialog,
-    
+    GamePage,
+
   ],
   imports: [
     BrowserModule,
-    FormsModule, 
+    FormsModule,
     ReactiveFormsModule,
 
     RouterModule.forRoot(appRoutes, { enableTracing: false }),
 
 
-     // Angular Material
-     BrowserAnimationsModule,
-     MatDialogModule,
-     MatButtonModule,
-     MatFormFieldModule,
-     MatInputModule
+    // Angular Material
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [
     StorageService,
     ContractService,
     WalletService,
-    
+
     DialogService
   ],
   entryComponents: [

@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material';
 import { DialogService } from './dialog.service';
 
 
+
 @Injectable()
 export class WalletService {
 
