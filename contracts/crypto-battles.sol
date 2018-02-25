@@ -102,8 +102,8 @@ contract CryptoBattles is Ownable {
     
     // adds gold for every "block mined in the real network" since last call of this function 
     function syncPlayer(address _addr) private {
-        players[_addr].gold += getNotSyncedBlocks(_addr);
-        players[_addr].blocks += getNotSyncedGold(_addr);
+        players[_addr].gold += getNotSyncedGold(_addr);
+        players[_addr].blocks += getNotSyncedBlocks(_addr);
         players[_addr].lastSynced = block.number;
     }
     
@@ -165,6 +165,26 @@ contract CryptoBattles is Ownable {
         players[addr].peasants -= _solders;
         players[addr].gold -= price;
         players[addr].soldiers += _solders;
+    }
+    
+    function buyHouses(uint _houses) isPlayer public {
+        address addr = msg.sender;
+        uint price = _houses * prices.house();
+        
+        // overflow
+        require(players[addr].houses + _houses > players[addr].houses);
+
+        // each level of the castle allows 5 houses
+        uint maxHouses = players[addr].castleLvl * 5;
+        require(maxHouses >= _houses);
+
+        syncPlayer(addr);
+        
+        // enough money
+        require(players[addr].gold >= price);
+        
+        players[addr].gold -= price;
+        players[addr].houses += _houses;
     }
     
     function getPlayer(address _addr) public view returns(
