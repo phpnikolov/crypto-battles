@@ -13,12 +13,35 @@ contract Ownable {
     }
 }
 
+contract Random {
 
-contract CryptoBattles is Ownable {
+    uint private seed ;
+    
+    function maxRandom() private returns (uint256 randomNumber) {
+        seed = uint256(keccak256(
+            seed,
+            block.blockhash(block.number - 1),
+            block.coinbase,
+            block.difficulty
+        ));
+    return seed;
+  }
+
+
+  function random(uint min, uint max) internal returns (uint256 randomNumber) {
+      require(min < max);
+
+    uint r = maxRandom() % (max - min + 1);
+    return min + r;
+  }
+}
+
+
+contract CryptoBattles is Ownable, Random {
     struct Player {
         bytes12 username;
         uint lastSynced; // block number
-        uint gold;
+        uint diamonds;
         uint experience;
         uint life;
         
@@ -30,9 +53,6 @@ contract CryptoBattles is Ownable {
     // all registered players
     mapping (address => Player) private players;
     
-    // holds registered usernames (username must be unique)
-    mapping (bytes12 => bool) public usernames;
-
     modifier isPlayer() {
         require(isRegistered(msg.sender) == true);
         _;
@@ -44,23 +64,37 @@ contract CryptoBattles is Ownable {
 
     function register(bytes12 _username) public {
         require(isRegistered(msg.sender) == false);
-        require(usernames[_username] == false);
         require(_username.length >= 4);
-        
-        usernames[_username] = true;
+
         players[msg.sender] = Player({
             username: _username,
             lastSynced: block.number,
-            gold: 1000,
+            diamonds: 1000,
             experience: 0,
+            life : 100,
             
             strengthPoints:0,
             vitalityPoints:0,
-            intelligencePoints:0,
-            life : 100
+            intelligencePoints:0
+            
         });
     }
     
+    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=40*(x+-+1)(x+%2B+8);+x+from+1+to+99
+    function getLevelSize(uint _level) private pure returns(uint) {
+        require(_level > 0);
+        return (40 * (_level - 1) * (_level + 8));
+    }
+    
+    function getLevel(address _addr) private view returns(uint) {
+
+        for (uint i = 0; i < 99; i++) {
+            if (players[_addr].experience < getLevelSize(i + 1)) {
+                return i;
+            }
+        }
+        return 99;
+    }
     
     function getUnsyncedBlocks(address _addr) private view returns(uint) {
         return block.number - players[_addr].lastSynced;
@@ -107,25 +141,20 @@ contract CryptoBattles is Ownable {
     
     function getPlayer(address _addr) public view returns(
         bytes12 _username,
-        uint _gold,
+        uint _diamonds,
         uint _experience,
         uint _strength,
         uint _vitaility,
         uint _intelligence,
-        uint _life,
-        uint _maxLife,
-        uint _damage
+        uint _life
     ){
         require(isRegistered(_addr) == true);
-        
         _username = players[_addr].username;
-        _gold = players[_addr].gold;
+        _diamonds = players[_addr].diamonds;
         _experience = players[_addr].experience;
         _strength = getStrength(_addr);
         _vitaility = getVitaility(_addr);
         _intelligence = getIntelligence(_addr);
         _life = getLife(_addr);
-        _maxLife = getMaxLife(_addr);
-        _damage = getDamage(_addr);
     }
 }
