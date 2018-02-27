@@ -1,0 +1,22 @@
+#avatar {
+    width: 100%;
+    margin: auto;
+    display: block;
+}
+
+#lvl-container {
+    position: relative;
+}
+
+#lvl {
+    position: absolute;
+    left: -3px;
+    top: -8px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    font-weight: bold;
+    line-height: 28px;
+    z-index: 100;
+    cursor: default;
+}

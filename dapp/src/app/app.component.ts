@@ -11,7 +11,7 @@ import { WalletService } from './services/wallet.service';
 export class AppComponent {
 
   public constructor(
-    public wallet:WalletService
+    public wallet: WalletService
   ) {
 
   }

@@ -1,72 +1,57 @@
 <div *ngIf="player">
+    <div class="row">
+        <div class="col-sm-3 text-center">
 
-    <table class="table table-sm">
-        <tbody>
-            <tr>
-                <th width="120">username</th>
-                <td width="150">{{player.username}}</td>
-                <td></td>
-            </tr>
+            <img src="https://robohash.org/{{wallet.getAddress()}}" alt="{{player.username}} avatar" class="border-bottom border-ligh" id="avatar">
 
-            <tr>
-                <th>blocks</th>
-                <td>{{player.blocks | number}}</td>
-                <td></td>
-            </tr>
+            <span class="border border-top-0 rounded-bottom d-inline-block px-3 py-1" title="Diamonds"><i class="fa fa-diamond"></i> {{player.diamonds |number}}</span>
 
-            <tr>
-                <th>gold</th>
-                <td>{{player.gold | number}}</td>
-                <td></td>
-            </tr>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="text-center mt-4">{{player.username}}</h3>
+            <div id="lvl-container">
+                <div id="lvl" class="bg-warning rounded-circle border border-secondary" title="Level">{{player.level}}</div>
+                <div class="progress ml-4 border border-secondary" title="{{player.experience}} / {{player.nextLevelExperience}}">
+                    <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" [ngStyle]="{'width': (player.experience / player.nextLevelExperience * 100) + '%'}"></div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <table width="100%">
+                    <tr>
+                        <td width="65" class="align-top">
+                            <i class="fa fa-gavel border border-secondary rounded p-2" style="font-size: 35px"></i>
+                        </td>
+                        <td class="align-top">
+                            <b>Damage:</b> <br>
+                            <span class="text-secondary">{{player.damage | number}}</span>
+                        </td>
+                        <td rowspan="2">
+                            <b>Strength:</b> <br>
+                            <span class="text-secondary">{{player.strength | number}}</span><br>
 
-            <tr>
-                <th>experience</th>
-                <td>{{player.experience | number}}</td>
-                <td></td>
-            </tr>
+                            <b>Vitality:</b> <br>
+                            <span class="text-secondary">{{player.vitaility | number}}</span><br>
 
-            <tr>
-                <th>peasants</th>
-                <td>{{player.peasants | number}}</td>
-                <td></td>
-            </tr>
+                            <b>Intelligence:</b> <br>
+                            <span class="text-secondary">{{player.intelligence | number}}</span><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i class="fa fa-heart border border-secondary rounded p-2" style="font-size: 35px"></i>
+                        </td>
+                        <td>
+                            <b>Life:</b> <br>
+                            <span class="text-secondary">{{player.life | number}} / {{player.maxLife | number}}</span>
+                        </td>
 
-            <tr>
-                <th>peasantsToBuy</th>
-                <td>{{player.peasantsToBuy | number}}</td>
-                <td><button class="btn btn-primary btn-sm" (click)="buyPeasants(1)">Buy</button></td>
-            </tr>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-sm-3">
 
-            <tr>
-                <th>miners</th>
-                <td>{{player.miners | number}}</td>
-                <td><button class="btn btn-primary btn-sm" (click)="buyMiners(1)">Buy</button></td>
-            </tr>
+        </div>
+    </div>
 
-            <tr>
-                <th>soldiers</th>
-                <td>{{player.soldiers | number}}</td>
-                <td><button class="btn btn-primary btn-sm" (click)="buySolders(1)">Buy</button></td>
-            </tr>
-
-            <tr>
-                <th>houses</th>
-                <td>{{player.houses | number}}</td>
-                <td></td>
-            </tr>
-
-            <tr>
-                <th>castleLvl</th>
-                <td>{{player.castleLvl | number}}</td>
-                <td></td>
-            </tr>
-
-        </tbody>
-    </table>
-
-
-
-
-    <router-outlet></router-outlet>
 </div>

@@ -13,25 +13,6 @@ export const environment = {
         "constant": true,
         "inputs": [
           {
-            "name": "",
-            "type": "bytes12"
-          }
-        ],
-        "name": "usernames",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
             "name": "_addr",
             "type": "address"
           }
@@ -55,41 +36,6 @@ export const environment = {
             "type": "address"
           }
         ],
-        "name": "getPrices",
-        "outputs": [
-          {
-            "name": "_miner",
-            "type": "uint256"
-          },
-          {
-            "name": "_solder",
-            "type": "uint256"
-          },
-          {
-            "name": "_house",
-            "type": "uint256"
-          },
-          {
-            "name": "_peasant",
-            "type": "uint256"
-          },
-          {
-            "name": "_castle",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "_addr",
-            "type": "address"
-          }
-        ],
         "name": "getPlayer",
         "outputs": [
           {
@@ -97,11 +43,7 @@ export const environment = {
             "type": "bytes12"
           },
           {
-            "name": "_blocks",
-            "type": "uint256"
-          },
-          {
-            "name": "_gold",
+            "name": "_diamonds",
             "type": "uint256"
           },
           {
@@ -109,74 +51,24 @@ export const environment = {
             "type": "uint256"
           },
           {
-            "name": "_peasants",
+            "name": "_strength",
             "type": "uint256"
           },
           {
-            "name": "_peasantsToBuy",
+            "name": "_vitaility",
             "type": "uint256"
           },
           {
-            "name": "_miners",
+            "name": "_intelligence",
             "type": "uint256"
           },
           {
-            "name": "_soldiers",
-            "type": "uint256"
-          },
-          {
-            "name": "_castleLvl",
-            "type": "uint256"
-          },
-          {
-            "name": "_houses",
+            "name": "_life",
             "type": "uint256"
           }
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_miners",
-            "type": "uint256"
-          }
-        ],
-        "name": "buyMiners",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_peasants",
-            "type": "uint256"
-          }
-        ],
-        "name": "buyPeasants",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_solders",
-            "type": "uint256"
-          }
-        ],
-        "name": "buySolders",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
         "type": "function"
       },
       {

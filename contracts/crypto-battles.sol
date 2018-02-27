@@ -13,40 +13,18 @@ contract Ownable {
     }
 }
 
-contract Prices {
-    uint public miner = 1500;
-    uint public solder = 1000;
-    uint public house = 25000;
-    
-    function peasant(uint _castleLvl) public pure returns(uint) {
-        return 5000 * _castleLvl;
-    }
-
-    function castle(uint _castleLvl) public pure returns(uint) {
-        return (_castleLvl + 1) * 100000;
-    }
-}
 
 contract CryptoBattles is Ownable {
-    
-    Prices prices = new Prices();
-    
     struct Player {
         bytes12 username;
         uint lastSynced; // block number
-        uint blocks;
         uint gold;
         uint experience;
+        uint life;
         
-        // units
-        uint peasants;
-        uint peasantsToBuy;
-        uint miners;
-        uint soldiers;
-        
-        // buildings
-        uint castleLvl;
-        uint houses;
+        uint strengthPoints;
+        uint vitalityPoints;
+        uint intelligencePoints;
     }
 
     // all registered players
@@ -73,163 +51,81 @@ contract CryptoBattles is Ownable {
         players[msg.sender] = Player({
             username: _username,
             lastSynced: block.number,
-            blocks: 3000,
-            gold: 100000,
+            gold: 1000,
             experience: 0,
             
-            peasants: 1,
-            peasantsToBuy: 10,
-            miners: 0,
-            soldiers: 0,
-            
-            castleLvl: 1,
-            houses: 1
+            strengthPoints:0,
+            vitalityPoints:0,
+            intelligencePoints:0,
+            life : 100
         });
     }
     
-    function getGoldPerBlock(address _addr) private view returns(uint) {
-        return ((1 * players[_addr].miners) + (40 * players[_addr].castleLvl));
-    }
     
-    function getNotSyncedBlocks(address _addr) private view returns(uint){
+    function getUnsyncedBlocks(address _addr) private view returns(uint) {
         return block.number - players[_addr].lastSynced;
     }
     
-    function getNotSyncedGold(address _addr) private view returns(uint){
-        return getNotSyncedBlocks(_addr) * getGoldPerBlock(_addr);
-    }
-    
-    
-    // adds gold for every "block mined in the real network" since last call of this function 
     function syncPlayer(address _addr) private {
-        players[_addr].gold += getNotSyncedGold(_addr);
-        players[_addr].blocks += getNotSyncedBlocks(_addr);
+        players[_addr].life = getLife(_addr);
         players[_addr].lastSynced = block.number;
     }
     
-    function buyPeasants(uint _peasants) isPlayer public {
-        address addr = msg.sender;
-        uint price = _peasants * prices.peasant(players[addr].castleLvl);
-        
-        // overflow
-        require(players[addr].peasants + _peasants > players[addr].peasants);
-
-        // enough peasants to buy
-        require(players[addr].peasantsToBuy >= _peasants);
-
-        syncPlayer(addr);
-        
-        // enough money
-        require(players[addr].gold >= price);
-        
-        players[addr].peasantsToBuy -= _peasants;
-        players[addr].gold -= price;
-        players[addr].peasants += _peasants;
+    function getStrength(address _addr) private view returns(uint) {
+        return 35 + players[_addr].strengthPoints;
     }
     
-    function buyMiners(uint _miners) isPlayer public {
-        address addr = msg.sender;
-        uint price = _miners * prices.miner();
-        
-        // overflow
-        require(players[addr].miners + _miners > players[addr].miners);
-
-        // enough peasants
-        require(players[addr].peasants >= _miners);
-
-        syncPlayer(addr);
-        
-        // enough money
-        require(players[addr].gold >= price);
-        
-        players[addr].peasants -= _miners;
-        players[addr].gold -= price;
-        players[addr].miners += _miners;
+    function getVitaility(address _addr) private view returns(uint) {
+        return 20 + players[_addr].vitalityPoints;
     }
     
-    function buySolders(uint _solders) isPlayer public {
-        address addr = msg.sender;
-        uint price = _solders * prices.solder();
-        
-        // overflow
-        require(players[addr].soldiers + _solders > players[addr].soldiers);
-
-        // enough peasants
-        require(players[addr].peasants >= _solders);
-
-        syncPlayer(addr);
-        
-        // enough money
-        require(players[addr].gold >= price);
-        
-        players[addr].peasants -= _solders;
-        players[addr].gold -= price;
-        players[addr].soldiers += _solders;
+    function getIntelligence(address _addr) private view returns(uint) {
+        return 20 + players[_addr].intelligencePoints;
     }
     
-    function buyHouses(uint _houses) isPlayer public {
-        address addr = msg.sender;
-        uint price = _houses * prices.house();
+    function getLifePerBlock(address _addr) private view returns(uint) {
+        return (1 * getIntelligence(_addr));
+    }
+    
+    function getMaxLife(address _addr) private view returns(uint) {
+        return getVitaility(_addr) * 5;
+    }
+    
+    function getLife(address _addr) private view returns(uint) {
+        uint notSyncedLife = getUnsyncedBlocks(_addr) * getLifePerBlock(_addr);
         
-        // overflow
-        require(players[addr].houses + _houses > players[addr].houses);
-
-        // each level of the castle allows 5 houses
-        uint maxHouses = players[addr].castleLvl * 5;
-        require(maxHouses >= _houses);
-
-        syncPlayer(addr);
+        if (players[_addr].life + notSyncedLife > getMaxLife(_addr)) {
+            return getMaxLife(_addr);
+        }
         
-        // enough money
-        require(players[addr].gold >= price);
-        
-        players[addr].gold -= price;
-        players[addr].houses += _houses;
+        return  players[_addr].life + notSyncedLife;
+    }
+    
+    function getDamage(address _addr) private view returns(uint) {
+        return getStrength(_addr) * 1;
     }
     
     function getPlayer(address _addr) public view returns(
         bytes12 _username,
-        uint _blocks,
         uint _gold,
         uint _experience,
-        uint _peasants,
-        uint _peasantsToBuy,
-        uint _miners,
-        uint _soldiers,
-        uint _castleLvl,
-        uint _houses
+        uint _strength,
+        uint _vitaility,
+        uint _intelligence,
+        uint _life,
+        uint _maxLife,
+        uint _damage
     ){
         require(isRegistered(_addr) == true);
         
         _username = players[_addr].username;
-        _blocks = players[_addr].blocks + getNotSyncedBlocks(_addr);
-        _gold = players[_addr].gold + getNotSyncedGold(_addr);
+        _gold = players[_addr].gold;
         _experience = players[_addr].experience;
-        
-        // units
-        _peasants = players[_addr].peasants;
-        _peasantsToBuy = players[_addr].peasantsToBuy;
-        _miners = players[_addr].miners;
-        _soldiers = players[_addr].soldiers;
-        
-        // buildings
-        _castleLvl = players[_addr].castleLvl;
-        _houses = players[_addr].houses;
-    }
-    
-    function getPrices(address _addr) isPlayer public view returns(
-        uint _miner,
-        uint _solder,
-        uint _house,
-        uint _peasant,
-        uint _castle
-    ) {
-        require(isRegistered(_addr) == true);
-        
-        _miner = prices.miner();
-        _solder = prices.solder();
-        _house = prices.house();
-        _peasant = prices.peasant(players[_addr].castleLvl);
-        _castle = prices.castle(players[_addr].castleLvl);
+        _strength = getStrength(_addr);
+        _vitaility = getVitaility(_addr);
+        _intelligence = getIntelligence(_addr);
+        _life = getLife(_addr);
+        _maxLife = getMaxLife(_addr);
+        _damage = getDamage(_addr);
     }
 }
