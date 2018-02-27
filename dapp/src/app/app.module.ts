@@ -36,6 +36,7 @@ import { DialogService } from './services/dialog.service';
 
 // dialogs
 import { PromptDialog } from './dialogs/prompt/prompt.dialog';
+import { TxWatcherComponent } from './components/tx-watcher/tx-watcher.component';
 
 
 
@@ -90,6 +91,7 @@ StorageService.namespace = 'crypto-battles';
     PageNotFoundPage,
     PromptDialog,
     GamePage,
+    TxWatcherComponent,
 
   ],
   imports: [

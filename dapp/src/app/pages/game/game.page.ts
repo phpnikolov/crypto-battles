@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { WalletService } from '../../services/wallet.service';
 import { ContractService, Player } from '../../services/contract.service';
 import { DialogService } from '../../services/dialog.service';
+import { Transaction } from '../../interfaces/transaction';
 
 
 
@@ -33,7 +34,11 @@ export class GamePage {
         return;
       }
       else {
-        this.loadPlayer();
+        this.wallet.unlock().then(() => {
+          this.loadPlayer();
+        })
+
+
 
         setInterval(() => {
           this.loadPlayer();
@@ -49,13 +54,58 @@ export class GamePage {
   }
 
   public loadPlayer() {
-    this.contract.getPlayer(this.wallet.getAddress())
-      .then((player: Player) => {
-        this.player = player;
-      })
-      .catch(err => {
-        this.dialogService.addError(err);
-      })
+    if (this.wallet.isUnlocked)
+      this.contract.getPlayer(this.wallet.getAddress())
+        .then((player: Player) => {
+          this.player = player;
+        })
+        .catch(err => {
+          this.dialogService.addError(err);
+        })
+  }
+
+
+  public buyPeasants(peasants: number) {
+    this.contract.buyPeasants(peasants).then((tx: Transaction) => {
+
+      tx.onChange = (tx: Transaction) => {
+        if (tx.status == 'confirmed') {
+          // reload player
+          this.loadPlayer();
+        }
+      };
+
+      tx.onChange(tx);
+    });
+  }
+
+
+  public buyMiners(miners: number) {
+    this.contract.buyMiners(miners).then((tx: Transaction) => {
+
+      tx.onChange = (tx: Transaction) => {
+        if (tx.status == 'confirmed') {
+          // reload player
+          this.loadPlayer();
+        }
+      };
+
+      tx.onChange(tx);
+    });
+  }
+
+  public buySolders(miners: number) {
+    this.contract.buySolders(miners).then((tx: Transaction) => {
+
+      tx.onChange = (tx: Transaction) => {
+        if (tx.status == 'confirmed') {
+          // reload player
+          this.loadPlayer();
+        }
+      };
+
+      tx.onChange(tx);
+    });
   }
 
 }

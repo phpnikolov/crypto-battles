@@ -18,8 +18,6 @@ export class PromptDialog {
     public data: PromptSettings
   ) {
 
-    let validators = [];
-
 
     this.fg = fb.group({
       'answer': [this.data.defaultValue, this.data.validators]
@@ -46,7 +44,6 @@ export interface PromptSettings {
   defaultValue: string,
   inputType: string,
   validators: any[],
-  cancelable: boolean,
   resolve: (value: string) => void,
   reject: () => void,
 }

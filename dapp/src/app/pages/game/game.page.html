@@ -1,4 +1,72 @@
 <div *ngIf="player">
-    Hello {{player.username}} {{player.gold}}
+
+    <table class="table table-sm">
+        <tbody>
+            <tr>
+                <th width="120">username</th>
+                <td width="150">{{player.username}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>blocks</th>
+                <td>{{player.blocks | number}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>gold</th>
+                <td>{{player.gold | number}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>experience</th>
+                <td>{{player.experience | number}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>peasants</th>
+                <td>{{player.peasants | number}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>peasantsToBuy</th>
+                <td>{{player.peasantsToBuy | number}}</td>
+                <td><button class="btn btn-primary btn-sm" (click)="buyPeasants(1)">Buy</button></td>
+            </tr>
+
+            <tr>
+                <th>miners</th>
+                <td>{{player.miners | number}}</td>
+                <td><button class="btn btn-primary btn-sm" (click)="buyMiners(1)">Buy</button></td>
+            </tr>
+
+            <tr>
+                <th>soldiers</th>
+                <td>{{player.soldiers | number}}</td>
+                <td><button class="btn btn-primary btn-sm" (click)="buySolders(1)">Buy</button></td>
+            </tr>
+
+            <tr>
+                <th>houses</th>
+                <td>{{player.houses | number}}</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th>castleLvl</th>
+                <td>{{player.castleLvl | number}}</td>
+                <td></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+
+
     <router-outlet></router-outlet>
 </div>

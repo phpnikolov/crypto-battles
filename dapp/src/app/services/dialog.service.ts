@@ -16,7 +16,7 @@ export class DialogService {
     defaultValue?: string, 
     inputType?: string, 
     validators?: any[] ,
-    cancelable?:boolean
+    disableClose?:boolean
   } = {}): Promise<string> {
     return new Promise((resolve, reject) => {
 
@@ -25,11 +25,10 @@ export class DialogService {
         defaultValue: settings.defaultValue || '',
         inputType: settings.inputType || 'text',
         validators: settings.validators || [],
-        cancelable: settings.cancelable || true,
         resolve: resolve,
         reject: reject,
       };
-      this.dialog.open(PromptDialog, { width: '350px', data: settins });
+      this.dialog.open(PromptDialog, { width: '350px', data: settins, disableClose: settings.disableClose });
     })
   }
 

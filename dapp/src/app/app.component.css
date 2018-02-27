@@ -1,0 +1,10 @@
+app-tx-watcher {
+    position: fixed;
+    height: 200px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #dee2e6;
+    background-color: #fbfbfb;
+    overflow-y: auto;
+}

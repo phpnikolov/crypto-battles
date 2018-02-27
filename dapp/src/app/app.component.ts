@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { StorageService } from './services/storage.service';
+import { WalletService } from './services/wallet.service';
 
 
 @Component({
@@ -9,7 +10,9 @@ import { StorageService } from './services/storage.service';
 })
 export class AppComponent {
 
-  public constructor() {
+  public constructor(
+    public wallet:WalletService
+  ) {
 
   }
 
