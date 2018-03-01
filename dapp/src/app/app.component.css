@@ -1,6 +1,6 @@
 app-tx-watcher {
     position: fixed;
-    height: 200px;
+    height: 160px;
     bottom: 0;
     left: 0;
     right: 0;
@@ -9,7 +9,11 @@ app-tx-watcher {
     overflow-y: auto;
 }
 
-.container {
-    position: relative;
-    height: 100%;
+#content-container {
+    position: absolute;
+    top: 0;
+    bottom: 160px;
+    left: 0;
+    right: 0;
+    overflow: auto;
 }

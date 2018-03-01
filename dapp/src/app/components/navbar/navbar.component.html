@@ -1,0 +1,18 @@
+<div class="p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center">
+            <div class="mr-md-auto" *ngIf="player">
+                <span class="mx-3" title="Gold">{{player.gold | number}} <i class="fa fa-diamond"></i></span>
+                <span class="mx-3" title="Current day">{{player.day | number}} <i class="fa fa-clock-o"></i></span>
+
+            </div>
+
+            <nav class="my-2 my-md-0 mr-md-3">
+                <a class="p-2" [routerLinkActive]="['text-dark']" [routerLink]="['hero']">Hero</a>
+                <a class="p-2" [routerLinkActive]="['text-dark']" [routerLink]="['creatures']">Creatures</a>
+                <a class="p-2" [routerLinkActive]="['text-dark']" [routerLink]="['shop']">Shop</a>
+            </nav>
+        </div>
+    </div>
+
+</div>

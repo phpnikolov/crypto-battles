@@ -5,7 +5,7 @@ import { WalletService } from '../../services/wallet.service';
 import { ContractService } from '../../services/contract.service';
 import { DialogService } from '../../services/dialog.service';
 import { Transaction } from '../../interfaces/transaction';
-import { Player } from '../../classes/player';
+import { PlayerService } from '../../services/player.service';
 
 
 
@@ -14,13 +14,13 @@ import { Player } from '../../classes/player';
   styleUrls: ['./game.page.css']
 })
 export class GamePage {
-  public player: Player;
 
   constructor(
     private router: Router,
     public wallet: WalletService,
     public contract: ContractService,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    public player: PlayerService
 
   ) {
     if (!this.wallet.getAddress()) {
@@ -36,33 +36,15 @@ export class GamePage {
       }
       else {
         //this.wallet.unlock().then(() => {
-        this.loadPlayer();
-        // })
-
-
+        player.load();
+        //}
 
         setInterval(() => {
-          this.loadPlayer();
-        }, 7000); // read the player every 7 sec
+          player.load();
+        }, 7500); // read the player every 7.5 sec
       }
     }).catch((err) => {
       dialogService.addError(err);
     })
   }
-
-  public loadPlayer() {
-    if (!this.wallet.isUnlocked) {
-      // return;
-    }
-    this.contract.getPlayer()
-      .then((player: Player) => {
-        this.player = player;
-      })
-      .catch(err => {
-        this.dialogService.addError(err);
-      })
-  }
-
-
-
 }

@@ -8,7 +8,6 @@ import * as Tx from "ethereumjs-tx";
 
 import { environment } from "../../environments/environment";
 import { Transaction } from '../interfaces/transaction';
-import { Player } from '../classes/player';
 
 @Injectable()
 export class ContractService {
@@ -43,15 +42,10 @@ export class ContractService {
   }
 
 
-  public getPlayer(): Promise<Player> {
+  public getPlayer(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.contract.methods.getPlayer().call({from: this.wallet.getAddress()})
-        .then(data => {
-          let player: Player = new Player(data);
-
-
-          resolve(player);
-        }).catch(reject);
+        .then(resolve).catch(reject);
     });
   }
 }

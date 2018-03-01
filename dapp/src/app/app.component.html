@@ -1,6 +1,8 @@
 <app-alerts></app-alerts>
-<div class="container">
-    <router-outlet></router-outlet>
 
-    <app-tx-watcher *ngIf="false &&wallet.getAddress()"></app-tx-watcher>
+<div id="content-container">
+    <router-outlet></router-outlet>
 </div>
+
+
+<app-tx-watcher *ngIf="wallet.getAddress()"></app-tx-watcher>

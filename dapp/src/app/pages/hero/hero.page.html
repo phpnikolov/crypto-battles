@@ -1,0 +1,39 @@
+<div class="row" *ngIf="player.isLoaded">
+    <div class="col-sm align-bottom">
+        <img src="https://robohash.org/{{player.address}}?size=400x400" alt="{{player.username}} avatar" class="border-bottom border-secondary" width="100%">
+        <h4 class="text-center mt-1">{{player.username}}</h4>
+        <div id="lvl-container">
+            <div id="lvl" class="bg-warning rounded-circle border border-secondary" title="Level">{{player.level}}</div>
+            <div class="progress ml-4 border border-secondary" title="{{player.experience}} / {{player.nextLevelExperience}}">
+                <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" [ngStyle]="{'width': (player.experience / player.nextLevelExperience * 100) + '%'}"></div>
+            </div>
+            <table width="100%" class="mt-4" style="line-height: 1.2em">
+                <tr>
+                    <td width="50">
+                        <i class="fa fa-gavel icon"></i>
+                    </td>
+                    <td>
+                        <b>Damage</b> <br>
+                        <span class="text-secondary">{{player.damage | number}}</span>
+                    </td>
+                    <td class="text-right">
+                        <b>Health</b><br>
+                        <span class="text-secondary">{{player.health | number}} / {{player.maxHealth | number}}</span>
+                    </td>
+                    <td width="50" class="text-right">
+                        <i class="fa fa-heart icon"></i>
+                    </td>
+
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    <div class="col-sm">
+
+
+    </div>
+    <div class="col-sm">
+
+    </div>
+</div>
