@@ -8,3 +8,8 @@ app-tx-watcher {
     background-color: #fbfbfb;
     overflow-y: auto;
 }
+
+.container {
+    position: relative;
+    height: 100%;
+}

@@ -1,7 +1,15 @@
+#player-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    line-height: 1.2em;
+}
+
 #avatar {
     width: 100%;
-    margin: auto;
-    display: block;
+    position: absolute;
+    bottom: 0;
 }
 
 #lvl-container {
@@ -19,4 +27,19 @@
     line-height: 28px;
     z-index: 100;
     cursor: default;
+}
+
+.stats {
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.fa.icon {
+    border: 1px solid black;
+    display: inline-block;
+    font-size: 30px;
+    padding: 5px;
+    margin: 5px;
+    margin-top: 0;
+    border-radius: 5px;
 }

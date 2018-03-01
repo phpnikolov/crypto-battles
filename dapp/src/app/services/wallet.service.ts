@@ -13,6 +13,7 @@ import { PromptDialog } from "../dialogs/prompt/prompt.dialog";
 import { MatDialog } from '@angular/material';
 import { DialogService } from './dialog.service';
 import { Transaction } from '../interfaces/transaction';
+import { Buffer } from 'buffer';
 
 
 @Injectable()

@@ -25,7 +25,7 @@ export class ContractService {
 
 
   public isRegistered() {
-    return this.contract.methods.isRegistered(this.wallet.getAddress()).call();
+    return this.contract.methods.isRegistered(this.wallet.getAddress()).call({from: this.wallet.getAddress()});
   }
 
   public register(username: string): Promise<Transaction> {
@@ -43,9 +43,9 @@ export class ContractService {
   }
 
 
-  public getPlayer(addr: string): Promise<Player> {
+  public getPlayer(): Promise<Player> {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getPlayer(addr).call()
+      this.contract.methods.getPlayer().call({from: this.wallet.getAddress()})
         .then(data => {
           let player: Player = new Player(data);
 

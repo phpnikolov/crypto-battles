@@ -11,31 +11,7 @@ export const environment = {
     abi: [
       {
         "constant": true,
-        "inputs": [
-          {
-            "name": "_addr",
-            "type": "address"
-          }
-        ],
-        "name": "isRegistered",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "_addr",
-            "type": "address"
-          }
-        ],
+        "inputs": [],
         "name": "getPlayer",
         "outputs": [
           {
@@ -43,7 +19,15 @@ export const environment = {
             "type": "bytes12"
           },
           {
-            "name": "_diamonds",
+            "name": "_level",
+            "type": "uint256"
+          },
+          {
+            "name": "_day",
+            "type": "uint256"
+          },
+          {
+            "name": "_gold",
             "type": "uint256"
           },
           {
@@ -63,8 +47,124 @@ export const environment = {
             "type": "uint256"
           },
           {
-            "name": "_life",
+            "name": "_health",
             "type": "uint256"
+          },
+          {
+            "name": "_deadUntil",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_creatureIdx",
+            "type": "uint8"
+          }
+        ],
+        "name": "fightCreature",
+        "outputs": [
+          {
+            "name": "_cType",
+            "type": "uint8"
+          },
+          {
+            "name": "_units",
+            "type": "uint256"
+          },
+          {
+            "name": "_healthLost",
+            "type": "uint256"
+          },
+          {
+            "name": "_goldWon",
+            "type": "uint256"
+          },
+          {
+            "name": "_experienceWon",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getCreatures",
+        "outputs": [
+          {
+            "name": "_cType0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType5",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount5",
+            "type": "uint8"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "isRegistered",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -84,6 +184,12 @@ export const environment = {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
+      },
+      {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
       }
     ]
   }

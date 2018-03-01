@@ -54,7 +54,7 @@ export class GamePage {
     if (!this.wallet.isUnlocked) {
       // return;
     }
-    this.contract.getPlayer(this.wallet.getAddress())
+    this.contract.getPlayer()
       .then((player: Player) => {
         this.player = player;
       })
