@@ -213,6 +213,7 @@ export class WalletService {
             tx.onChange(tx);
           })
           .then((receipt) => {
+            console.log(receipt);
             tx.status = 'confirmed';
             tx.onChange(tx);
           });

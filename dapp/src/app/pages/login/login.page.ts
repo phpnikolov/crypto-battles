@@ -41,7 +41,7 @@ export class LoginPage {
         ];
 
         // select username and add this account to the contract
-        this.dialogService.prompt('Enter username', { validators: validators, disableClose: true }).then((username: string) => {
+        this.dialogService.prompt('Select username', { validators: validators, disableClose: true }).then((username: string) => {
 
           // register address in the contrct
           this.contract.register(username).then((tx: Transaction) => {

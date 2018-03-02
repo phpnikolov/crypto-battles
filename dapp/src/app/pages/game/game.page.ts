@@ -44,7 +44,7 @@ export class GamePage {
         }, 7500); // read the player every 7.5 sec
       }
     }).catch((err) => {
-      dialogService.addError(err);
+      this.dialogService.addError(err);
     })
   }
 }

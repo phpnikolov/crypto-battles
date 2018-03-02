@@ -24,7 +24,7 @@ export class ContractService {
 
 
   public isRegistered() {
-    return this.contract.methods.isRegistered(this.wallet.getAddress()).call({from: this.wallet.getAddress()});
+    return this.contract.methods.isRegistered(this.wallet.getAddress()).call({ from: this.wallet.getAddress() });
   }
 
   public register(username: string): Promise<Transaction> {
@@ -44,8 +44,28 @@ export class ContractService {
 
   public getPlayer(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getPlayer().call({from: this.wallet.getAddress()})
+      this.contract.methods.getPlayer().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
     });
+  }
+
+  public getCreatures(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.contract.methods.getCreatures().call({ from: this.wallet.getAddress() })
+        .then(resolve).catch(reject);
+    });
+  }
+
+  public attackCreature(cureatureIdx: number): Promise<Transaction> {
+    let method = this.contract.methods.fightCreature(cureatureIdx);
+
+    let tx: Transaction = {
+      label: 'Attack creature',
+      to: this.env.contract.address,
+      gasLimit: 150000,
+      data: method.encodeABI()
+    }
+
+    return this.wallet.sendTransaction(tx);
   }
 }

@@ -1,4 +1,16 @@
-<app-navbar></app-navbar>
-<div class="container">
-    <router-outlet></router-outlet>
+<div *ngIf="player.isLoaded">
+    <app-navbar></app-navbar>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <app-hero></app-hero>
+            </div>
+            <div class="col-sm">
+                <app-creatures></app-creatures>
+            </div>
+            <div class="col-sm">
+                <app-shop></app-shop>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,3 +1,9 @@
-<p>
-  creatures works!
-</p>
+<div *ngIf="creaturesService.isLoaded">
+    <ng-template ngFor let-creature [ngForOf]="creaturesService.creatures" let-i="index">
+        <div *ngIf="creature">
+            {{creature.data.name}} - {{creature.count}}
+            <img src="{{creature.data.imageUrl}}" alt=" {{creature.data.name}}">
+            <button class="btn btn-danger" (click)="attack(i)">Attack</button>
+        </div>
+    </ng-template>
+</div>

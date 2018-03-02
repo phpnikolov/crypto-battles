@@ -26,6 +26,7 @@ import { StorageService } from './services/storage.service';
 import { ContractService } from './services/contract.service';
 import { WalletService } from './services/wallet.service';
 import { PlayerService } from './services/player.service';
+import { CreaturesService } from './services/creatures.service';
 
 // Pages
 import { LoginPage } from './pages/login/login.page';
@@ -63,26 +64,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'game',
-    component: GamePage,
-    children: [
-      {
-        path: '',
-        redirectTo: 'hero',
-        pathMatch: 'full'
-      },
-      {
-        path: 'hero',
-        component: HeroPage,
-      },
-      {
-        path: 'creatures',
-        component: CreaturesPage,
-      },
-      {
-        path: 'shop',
-        component: ShopPage,
-      }
-    ]
+    component: GamePage
   },
   {
     path: '**',
@@ -130,6 +112,7 @@ StorageService.namespace = 'crypto-battles';
     ContractService,
     WalletService,
     PlayerService,
+    CreaturesService,
     DialogService
   ],
   entryComponents: [
