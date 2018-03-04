@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { PromptDialog, PromptSettings } from '../dialogs/prompt/prompt.dialog';
+
 
 @Injectable()
 export class DialogService {
@@ -12,11 +13,11 @@ export class DialogService {
   private alerts: Alert[] = [];
 
 
-  public prompt(text: string, settings: { 
-    defaultValue?: string, 
-    inputType?: string, 
-    validators?: any[] ,
-    disableClose?:boolean
+  public prompt(text: string, settings: {
+    defaultValue?: string,
+    inputType?: string,
+    validators?: any[],
+    disableClose?: boolean
   } = {}): Promise<string> {
     return new Promise((resolve, reject) => {
 
@@ -73,7 +74,6 @@ export class DialogService {
   public addMessage(text: string, timeout?: number): void {
     this.addAlert('info', text, timeout);
   }
-
 }
 
 export interface Alert {

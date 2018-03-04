@@ -15,6 +15,11 @@ import { DialogService } from './dialog.service';
 import { Transaction } from '../interfaces/transaction';
 import { Buffer } from 'buffer';
 
+import { NotEnoughBalanceDialog } from '../dialogs/not-enough-balance/not-enough-balance.dialog';
+
+import { BigInteger } from 'big-integer';
+import * as bigInt from 'big-integer';
+
 
 @Injectable()
 export class WalletService {
@@ -26,6 +31,7 @@ export class WalletService {
   private ks;
   private password;
   private transactions: Transaction[] = [];
+  public gasPrice: BigInteger = bigInt(Utils.toWei('5', 'Gwei'));
 
   constructor(
     private storage: StorageService,
@@ -45,6 +51,7 @@ export class WalletService {
     catch (ex) {
 
     }
+    this.loadTransactions();
   }
 
   public saveKs(seedPhrase: string, password: string): Promise<void> {
@@ -70,6 +77,7 @@ export class WalletService {
           this.ks = ks;
           this._isUnlocked = true;
           this.storage.setVal('keystore', ks.serialize());
+          this.loadTransactions();
 
           return resolve();
         });
@@ -92,10 +100,14 @@ export class WalletService {
     });
 
 
-    
+
   }
 
   public getAddress(): string | undefined {
+    return this.address;
+  }
+
+  get address(): string | undefined {
     if (this.ks) {
       let addresses: string[] = this.ks.getAddresses();
       if (addresses.length > 0) {
@@ -113,7 +125,7 @@ export class WalletService {
         return resolve(this.password);
       }
 
-      this.dialogService.prompt('Enter password', { inputType: 'password', disableClose: true }).then((password: string) => {
+      this.dialogService.prompt('Enter your password to unlock', { inputType: 'password', disableClose: true }).then((password: string) => {
         this.password = password;
         resolve(this.password);
       }).catch(reject);
@@ -146,7 +158,7 @@ export class WalletService {
           }
 
           try {
-            let privateKey = this.ks.exportPrivateKey(this.getAddress(), pwDerivedKey);
+            let privateKey = this.ks.exportPrivateKey(this.address, pwDerivedKey);
 
             // private key is unlocked
             return resolve(privateKey);
@@ -164,30 +176,80 @@ export class WalletService {
   }
 
   public getBalance(): Promise<string> {
-    return this.eth.getBalance(this.getAddress());
+    return this.eth.getBalance(this.address);
   }
 
-  public sendTransaction(tx: Transaction): Promise<Transaction> {
+  private storeTransactions(): void {
+    if (!this.address) {
+      return;
+    }
 
+    this.storage.setVal(this.address + '-txs', JSON.stringify(this.getTransactions().slice(0, 20)));
+  }
+
+  private loadTransactions() {
+    if (!this.address) {
+      return;
+    }
+
+    this.transactions = [];
+    let txsJson = this.storage.getVal(this.address + '-txs');
+
+    if (txsJson) {
+      try {
+        this.transactions = JSON.parse(txsJson);
+      }
+      catch (ex) {
+      }
+    }
+  }
+
+
+  public sendTransaction(tx: Transaction): Promise<Transaction> {
     return new Promise<Transaction>(async (resolve, reject) => {
+
+      let txAmount: BigInteger = bigInt(tx.value).plus(this.gasPrice.times(tx.gasLimit));
+
+      let balance = await this.getBalance();
+      if (txAmount.greater(balance)) {
+        let dialogService = this.dialogService;
+
+        let mtDialog = this.dialogService.dialog.open(NotEnoughBalanceDialog, { width: '375px', data: { address: this.address }, disableClose: true });
+
+        let timer = setInterval(async () => {
+          let balance = await this.getBalance();
+          if (txAmount.lesser(balance)) {
+            // call `sendTransaction` after the address have enough balance
+            this.sendTransaction(tx).then(resolve).catch(reject);
+            mtDialog.close();
+            clearInterval(timer);
+            return;
+          }
+
+          dialogService.addMessage('Waiting...', 4500);
+        }, 5000);
+
+        return;
+      }
+
+      if (typeof tx.onChange !== 'function') {
+        tx.onChange = (tx) => { }
+      }
+
+      tx.timeCreated = new Date().getTime();
+      tx.status = 'pending';
+      tx.gasPrice = this.gasPrice.toString(10);
+
       let ethereumTx = new EthereumTx({
-        nonce: await this.eth.getTransactionCount(this.getAddress()),
+        nonce: await this.eth.getTransactionCount(this.address),
         gasLimit: tx.gasLimit,
-        gasPrice: tx.gasPrice,
+        gasPrice: '0x' + this.gasPrice.toString(16),
         to: tx.to,
         value: tx.value,
         data: tx.data
       });
 
-      /**
-       * @todo if gas * gasPrice > balance, display message to fund the account
-       */
-
-      if (typeof tx.onChange !== 'function') {
-        tx.onChange = (tx) => { }
-      }
-      tx.timeCreated = new Date().getTime();
-      tx.status = 'pending';
+      
 
       this.getPrivateKey().then((privateKey: string) => {
         let bPrivateKey = new Buffer(privateKey, 'hex');
@@ -196,18 +258,20 @@ export class WalletService {
         let serializedTx = ethereumTx.serialize();
 
         this.transactions.push(tx);
+        this.storeTransactions();
 
         this.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .once('transactionHash', (txHash: string) => {
             // transaction accepted
             tx.txHash = txHash;
-
+            this.storeTransactions();
             resolve(tx);
             tx.onChange(tx);
           })
           .on('error', (error) => {
             // transaction rejected
             tx.status = 'error';
+            this.storeTransactions();
             console.error(error);
             reject(error);
             tx.onChange(tx);
@@ -215,6 +279,8 @@ export class WalletService {
           .then((receipt) => {
             console.log(receipt);
             tx.status = 'confirmed';
+            tx.gasLimit = receipt.gasUsed;
+            this.storeTransactions();
             tx.onChange(tx);
           });
       });

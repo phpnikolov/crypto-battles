@@ -41,7 +41,7 @@ contract Random {
 contract CryptoBattles is Ownable, Random {
     
     enum CreatureType {
-        dead,
+        unknown,
         Halfling,
         Rogue,
         Nomad
@@ -63,6 +63,12 @@ contract CryptoBattles is Ownable, Random {
         uint experience;
     }
     
+    struct Battle {
+        CreatureType cType;
+        uint units;
+        uint day;
+    }
+    
     struct Player {
         bytes12 username;
         uint registrationBlock;
@@ -72,14 +78,14 @@ contract CryptoBattles is Ownable, Random {
         uint experience;
         uint health;
         
-        uint strengthPoints;
-        uint vitalityPoints;
-        uint intelligencePoints;
+        uint damagePoints;
+        uint healthPoints;
+        uint regenerationPoints;
         
-        // when was killed idx => day
-        mapping (uint8 => uint) killedCreatures;
+        // creature index => last battle
+        mapping (uint8 => Battle) lastBattles;
         
-        uint deadUntil; // block number
+        uint deadOn; // day
     }
 
     // all registered players
@@ -109,7 +115,7 @@ contract CryptoBattles is Ownable, Random {
             experience: 40 // 12 * 3.3 (50% less exp)
         });
         
-        // Nomad
+        // [Nomad]'
         creatures[uint8(CreatureType.Nomad)] = Creature({
             damage: 8,
             health: 16,
@@ -139,20 +145,20 @@ contract CryptoBattles is Ownable, Random {
             experience: 0,
             health : 100,
             
-            strengthPoints:0,
-            vitalityPoints:0,
-            intelligencePoints:0,
-            deadUntil: 0
+            damagePoints:0,
+            healthPoints:0,
+            regenerationPoints:0,
+            deadOn: 0
         });
     }
     
-    // day length 2400 blocks (~10 hours)
+    // day length 1000 blocks (~4 hours)
     function getDay(address _addr) private view returns(uint) {
-        return 1 + (block.number - players[_addr].registrationBlock) / 2400;
+        return 1 + (block.number - players[_addr].registrationBlock) / 1000;
     }
     
     function isDead(address _addr) private view returns(bool) {
-        return players[_addr].deadUntil > block.number;
+        return players[_addr].deadOn == getDay(_addr);
     }
     
     // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=40*(x+-+1)(x+%2B+8);+x+from+1+to+99
@@ -166,26 +172,15 @@ contract CryptoBattles is Ownable, Random {
         }
     }
     
-    function getStrength(address _addr) private view returns(uint) {
-        return 35 + players[_addr].strengthPoints;
-    }
-    
-    function getVitaility(address _addr) private view returns(uint) {
-        return 20 + players[_addr].vitalityPoints;
-    }
-    
-    function getIntelligence(address _addr) private view returns(uint) {
-        return 20 + players[_addr].intelligencePoints;
-    }
     
     function getHealthPer100Block(address _addr) private view returns(uint) {
-        // 1 intelligence = 0.1 health per block (10 health per 100block)
+        // 1 spirit = 0.1 health per block (10 health per 100block)
         
-        return (10 * getIntelligence(_addr));
+        return 100 + (players[_addr].regenerationPoints) * 10;
     }
     
     function getMaxHealth(address _addr) private view returns(uint) {
-        return getVitaility(_addr) * 5;
+        return 100 + (players[_addr].healthPoints) * 5;
     }
     
     function getHealth(address _addr) private view returns(uint) {
@@ -203,7 +198,7 @@ contract CryptoBattles is Ownable, Random {
     }
     
     function getDamage(address _addr) private view returns(uint) {
-        return getStrength(_addr);
+        return 35 + (players[_addr].damagePoints) * 1;
     }
 
     function creatureCount2Number(CreatureCount _creatureCount) private returns(uint) {
@@ -230,16 +225,54 @@ contract CryptoBattles is Ownable, Random {
         return 0;
     }
     
+    
+    function getBattles(address _addr) public view returns(
+        CreatureType _cType0,
+        uint _uinits0,
+        CreatureType _cType1,
+        uint _uinits1,
+        CreatureType _cType2,
+        uint _uinits2,
+        CreatureType _cType3,
+        uint _uinits3,
+        CreatureType _cType4,
+        uint _uinits4
+    ) {
+        uint day = getDay(_addr);
+        mapping (uint8 => Battle) battles = players[_addr].lastBattles;
+        
+        if (players[_addr].lastBattles[0].day == day) {
+            _cType0 = battles[0].cType;
+            _uinits0 = battles[0].units;
+        }
+        
+        if (battles[1].day == day) {
+            _cType1 = battles[1].cType;
+            _uinits1 = battles[1].units;
+        }
+        
+        if (battles[2].day == day) {
+            _cType2 = battles[2].cType;
+            _uinits2 = battles[2].units;
+        }
+        
+        if (battles[3].day == day) {
+            _cType3 = battles[3].cType;
+            _uinits3 = battles[3].units;
+        }
+        
+        if (battles[4].day == day) {
+            _cType4 = battles[4].cType;
+            _uinits4 = battles[4].units;
+        }
+    }
+    
+    
 
     function getCreature(address _addr, uint day, uint8 _creatureIdx) private view returns(CreatureType _type, CreatureCount _count){
-        require(_creatureIdx < 6);
+        require(_creatureIdx < 5);
         
-        if ( players[_addr].killedCreatures[_creatureIdx] >= day) {
-            _type = CreatureType.dead; // this creature is dead
-            _count = CreatureCount.unknown;
-            return;
-        }
-
+        // this random will return same number for current day (1000 blocks)
         uint staticRand = uint256(keccak256(_creatureIdx, day, _addr));
         uint rand = rangedRandom(staticRand, 0, 99);
 
@@ -270,7 +303,7 @@ contract CryptoBattles is Ownable, Random {
     }
     
     
-    // return all avaiable creatures (codes)
+    // return daily creatures
     function getCreatures() isPlayer public view returns(
         CreatureType _cType0,
         CreatureCount _cCount0,
@@ -281,9 +314,7 @@ contract CryptoBattles is Ownable, Random {
         CreatureType _cType3,
         CreatureCount _cCount3,
         CreatureType _cType4,
-        CreatureCount _cCount4,
-        CreatureType _cType5,
-        CreatureCount _cCount5
+        CreatureCount _cCount4
     ){
         uint today = getDay(msg.sender);
         
@@ -292,32 +323,27 @@ contract CryptoBattles is Ownable, Random {
        (_cType2, _cCount2) = getCreature(msg.sender, today, 2);
        (_cType3, _cCount3) = getCreature(msg.sender, today, 3);
        (_cType4, _cCount4) = getCreature(msg.sender, today, 4);
-       (_cType5, _cCount5) = getCreature(msg.sender, today, 5);
     }
     
-    function fightCreature(uint8 _creatureIdx) isPlayer public returns(
-        CreatureType _cType,
-        uint _units,
-        uint _healthLost,
-        uint _goldWon,
-        uint _experienceWon
-        ){
+    function attackCreature(uint8 _creatureIdx) isPlayer public {
         require(!isDead(msg.sender));
         
         // acepted creatures 0-6
         require(_creatureIdx < 6);
         
-  
         uint today = getDay(msg.sender);
         
+        // check if this creature is attacked today
+        require(players[msg.sender].lastBattles[_creatureIdx].day < today);
+  
+        CreatureType cType;
         CreatureCount cCount;
         
-        (_cType, cCount) = getCreature(msg.sender, today, _creatureIdx);
-        require(_cType != CreatureType.dead);
+        (cType, cCount) = getCreature(msg.sender, today, _creatureIdx);
 
-        Creature memory creature = creatures[uint8(_cType)];
+        Creature memory creature = creatures[uint8(cType)];
         
-        _units = creatureCount2Number(cCount);
+        uint units = creatureCount2Number(cCount);
         
         uint playerHealth = getHealth(msg.sender);
         
@@ -325,30 +351,46 @@ contract CryptoBattles is Ownable, Random {
         // multiply by 10000 for better decimal calculations, then devide by 10000;
         // total crreatures health / player damage = how many attacks is needed to kill the creatures
         // attakcs needed * creature damage = how many health player will lost
-        _healthLost = creature.health * _units * 10000 / getDamage(msg.sender) * creature.damage * _units / 10000; 
+        uint healthLost = creature.health * units * 10000 / getDamage(msg.sender) * creature.damage * units / 10000; 
         
         // won
-        if (playerHealth > _healthLost) {
-            _goldWon = creature.gold * _units;
-            _experienceWon = creature.experience * _units;
+        if (playerHealth > healthLost) {
+            uint goldWon = creature.gold * units;
+            uint experienceWon = creature.experience * units;
             
-            players[msg.sender].health = playerHealth - _healthLost;
+            players[msg.sender].health = playerHealth - healthLost;
             
-            players[msg.sender].gold += _goldWon;
-            players[msg.sender].experience += _experienceWon;
+            players[msg.sender].gold += goldWon;
+            players[msg.sender].experience += experienceWon;
             
             syncLevel(msg.sender); // update users level after experience gain
             
-            // mark creature as dead
-            players[msg.sender].killedCreatures[_creatureIdx] = today;
+        
+            // save Battle
+            players[msg.sender].lastBattles[_creatureIdx].cType = cType;
+            players[msg.sender].lastBattles[_creatureIdx].units = units;
+            players[msg.sender].lastBattles[_creatureIdx].day = today;
         }
         else {
-             // players is dead for 1000 blocks (~4 h)
-            players[msg.sender].deadUntil = block.number + 1000;
+             // players will be dead until next day
+            players[msg.sender].deadOn = today;
             players[msg.sender].health = getMaxHealth(msg.sender);
         }
         
         players[msg.sender].lastSynced = block.number;
+    }
+    
+    function setPoints(uint _damagePoints, uint _healthPoints, uint _regenerationPoints) isPlayer public {
+        require(_damagePoints >= players[msg.sender].damagePoints);
+        require(_healthPoints >= players[msg.sender].healthPoints);
+        require(_regenerationPoints >= players[msg.sender].regenerationPoints);
+        
+        // 5 points per level
+        require(_damagePoints + _healthPoints + _regenerationPoints <= (players[msg.sender].level - 1) * 5);
+        
+        players[msg.sender].damagePoints = _damagePoints;
+        players[msg.sender].healthPoints = _healthPoints;
+        players[msg.sender].regenerationPoints = _regenerationPoints;
     }
     
     function getPlayer() isPlayer public view returns(
@@ -357,11 +399,15 @@ contract CryptoBattles is Ownable, Random {
         uint _day,
         uint _gold,
         uint _experience,
-        uint _strength,
-        uint _vitaility,
-        uint _intelligence,
+        uint _maxHealth,
+        uint _damage,
+        uint _healthPer100Blocks,
         uint _health,
-        uint _deadUntil
+        uint _damagePoints,
+        uint _healthPoints,
+        uint _regenerationPoints,
+        uint _deadOn,
+        uint _blockNumber
     ){
         address _addr = msg.sender;
         _username = players[_addr].username;
@@ -369,10 +415,14 @@ contract CryptoBattles is Ownable, Random {
         _day = getDay(_addr);
         _gold = players[_addr].gold;
         _experience = players[_addr].experience;
-        _strength = getStrength(_addr);
-        _vitaility = getVitaility(_addr);
-        _intelligence = getIntelligence(_addr);
+        _maxHealth = getMaxHealth(_addr);
+        _damage = getDamage(_addr);
+        _healthPer100Blocks = getHealthPer100Block(_addr);
         _health = getHealth(_addr);
-        _deadUntil = players[_addr].deadUntil;
+        _damagePoints = players[_addr].damagePoints;
+        _healthPoints = players[_addr].healthPoints;
+        _regenerationPoints = players[_addr].regenerationPoints;
+        _deadOn = players[_addr].deadOn;
+        _blockNumber = block.number;
     }
 }

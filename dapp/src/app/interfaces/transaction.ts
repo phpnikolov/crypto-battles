@@ -10,6 +10,6 @@ export interface Transaction {
     to: string,
     value?: number,
     gasLimit: number,
-    gasPrice?: number,
+    gasPrice?: string,
     data?: string,
 }

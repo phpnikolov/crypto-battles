@@ -5,10 +5,29 @@
 
 export const environment = {
   production: false,
-  provider: 'http://127.0.0.1:7545',
+  provider: 'http://127.0.0.1:8545',
   contract: {
-    address: '0xf12b5dd4ead5f743c6baa640b0216200e89b60da',
+    address: '0x7bbdb152b1f073e400def62fc3fea5322ecd0a8f',
     abi: [
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "isRegistered",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
       {
         "constant": true,
         "inputs": [],
@@ -35,15 +54,15 @@ export const environment = {
             "type": "uint256"
           },
           {
-            "name": "_strength",
+            "name": "_maxHealth",
             "type": "uint256"
           },
           {
-            "name": "_vitaility",
+            "name": "_damage",
             "type": "uint256"
           },
           {
-            "name": "_intelligence",
+            "name": "_healthPer100Blocks",
             "type": "uint256"
           },
           {
@@ -51,47 +70,28 @@ export const environment = {
             "type": "uint256"
           },
           {
-            "name": "_deadUntil",
+            "name": "_damagePoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_healthPoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_regenerationPoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_deadOn",
+            "type": "uint256"
+          },
+          {
+            "name": "_blockNumber",
             "type": "uint256"
           }
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_creatureIdx",
-            "type": "uint8"
-          }
-        ],
-        "name": "fightCreature",
-        "outputs": [
-          {
-            "name": "_cType",
-            "type": "uint8"
-          },
-          {
-            "name": "_units",
-            "type": "uint256"
-          },
-          {
-            "name": "_healthLost",
-            "type": "uint256"
-          },
-          {
-            "name": "_goldWon",
-            "type": "uint256"
-          },
-          {
-            "name": "_experienceWon",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -138,14 +138,6 @@ export const environment = {
           {
             "name": "_cCount4",
             "type": "uint8"
-          },
-          {
-            "name": "_cType5",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount5",
-            "type": "uint8"
           }
         ],
         "payable": false,
@@ -154,21 +146,66 @@ export const environment = {
       },
       {
         "constant": true,
-        "inputs": [
-          {
-            "name": "_addr",
-            "type": "address"
-          }
-        ],
-        "name": "isRegistered",
+        "inputs": [],
+        "name": "getBattles",
         "outputs": [
           {
-            "name": "",
-            "type": "bool"
+            "name": "_cType0",
+            "type": "uint8"
+          },
+          {
+            "name": "_uinits0",
+            "type": "uint256"
+          },
+          {
+            "name": "_cType1",
+            "type": "uint8"
+          },
+          {
+            "name": "_uinits1",
+            "type": "uint256"
+          },
+          {
+            "name": "_cType2",
+            "type": "uint8"
+          },
+          {
+            "name": "_uinits2",
+            "type": "uint256"
+          },
+          {
+            "name": "_cType3",
+            "type": "uint8"
+          },
+          {
+            "name": "_uinits3",
+            "type": "uint256"
+          },
+          {
+            "name": "_cType4",
+            "type": "uint8"
+          },
+          {
+            "name": "_uinits4",
+            "type": "uint256"
           }
         ],
         "payable": false,
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_creatureIdx",
+            "type": "uint8"
+          }
+        ],
+        "name": "attackCreature",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -180,6 +217,28 @@ export const environment = {
           }
         ],
         "name": "register",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_damagePoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_healthPoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_regenerationPoints",
+            "type": "uint256"
+          }
+        ],
+        "name": "setPoints",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

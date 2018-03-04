@@ -1,0 +1,16 @@
+.creature-container img {
+    margin: -14px;
+}
+
+.attack {
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.creature-stats {
+    list-style: none;
+    padding: 0;
+    line-height: 1.3em;
+}

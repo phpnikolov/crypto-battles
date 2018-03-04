@@ -1,9 +1,28 @@
-<div *ngIf="creaturesService.isLoaded">
+<ul class="list-group" *ngIf="creaturesService.isLoaded">
     <ng-template ngFor let-creature [ngForOf]="creaturesService.creatures" let-i="index">
-        <div *ngIf="creature">
-            {{creature.data.name}} - {{creature.count}}
-            <img src="{{creature.data.imageUrl}}" alt=" {{creature.data.name}}">
-            <button class="btn btn-danger" (click)="attack(i)">Attack</button>
-        </div>
+        <li class="d-flex pos-r border-bottom creature-container">
+            <ng-template [ngIf]="!creaturesService.battles[i]">
+                <img src="{{creature.data.imageUrl}}" alt="{{creature.data.name}}">
+
+                <ul class="list-group mt-2 creature-stats" *ngIf="creaturesService.isLoaded">
+                    <li class="mb-2"><small class="text-uppercase font-weight-bold">{{creature.count.label}} of {{creature.data.name}}s</small></li>
+                    <li>Damage: <span class="text-secondary">{{creature.data.damage * creature.count.min | number}} - {{creature.data.damage * creature.count.max | number}}</span></li>
+                    <li>Health: <span class="text-secondary">{{creature.data.health * creature.count.min | number}} - {{creature.data.health * creature.count.max | number}}</span></li>
+                </ul>
+
+                <button class="btn btn-danger btn-sm attack" [disabled]="player.isDead || battlesInProgress[i]" (click)="attack(i)">Attack</button>
+            </ng-template>
+
+            <ng-template [ngIf]="creaturesService.battles[i]">
+                <img src="{{creaturesService.battles[i].data.imageUrl}}" class="opacity-50" alt="{{creaturesService.battles[i].data.name}}">
+
+                <ul class="list-group mt-2 creature-stats" *ngIf="creaturesService.isLoaded">
+                    <li class="mb-2"><small class="text-uppercase font-weight-bold text-success">{{creaturesService.battles[i].units}} {{creaturesService.battles[i].data.name}}s defeated</small></li>
+                    <li>Gold: <span class="text-secondary">{{creaturesService.battles[i].data.gold * creaturesService.battles[i].units | number}}</span></li>
+                    <li>Experience: <span class="text-secondary">{{creaturesService.battles[i].data.experience * creaturesService.battles[i].units | number}}</span></li>
+                </ul>
+
+            </ng-template>
+        </li>
     </ng-template>
-</div>
+</ul>

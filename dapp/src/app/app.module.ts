@@ -41,7 +41,8 @@ import { DialogService } from './services/dialog.service';
 
 // dialogs
 import { PromptDialog } from './dialogs/prompt/prompt.dialog';
-import { TxWatcherComponent } from './components/tx-watcher/tx-watcher.component';
+import { NotEnoughBalanceDialog } from './dialogs/not-enough-balance/not-enough-balance.dialog';
+import { WalletDialog } from './dialogs/wallet/wallet.dialog';
 
 
 
@@ -84,13 +85,14 @@ StorageService.namespace = 'crypto-battles';
     RegisterPage,
     PageNotFoundPage,
     PromptDialog,
+    NotEnoughBalanceDialog,
+    WalletDialog,
     GamePage,
-    TxWatcherComponent,
     NavbarComponent,
     HeroPage,
     CreaturesPage,
     ShopPage,
-
+   
   ],
   imports: [
     BrowserModule,
@@ -116,8 +118,10 @@ StorageService.namespace = 'crypto-battles';
     DialogService
   ],
   entryComponents: [
-    PromptDialog
+    PromptDialog,
+    NotEnoughBalanceDialog,
+    WalletDialog
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, AlertsComponent]
 })
 export class AppModule { }

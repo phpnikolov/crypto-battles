@@ -32,7 +32,7 @@ export class PlayerService {
             })
     }
 
-    get isLoaded() : boolean {
+    get isLoaded(): boolean {
         return (typeof this.playerData !== 'undefined');
     }
 
@@ -64,17 +64,7 @@ export class PlayerService {
         return this.getLevelSize(this.level + 1) - this.getLevelSize(this.level);
     }
 
-    get strength(): number {
-        return parseInt(this.playerData['_strength']);
-    }
 
-    get vitaility(): number {
-        return parseInt(this.playerData['_vitaility']);
-    }
-
-    get intelligence(): number {
-        return parseInt(this.playerData['_intelligence']);
-    }
 
     get health(): number {
         return parseInt(this.playerData['_health']);
@@ -85,18 +75,42 @@ export class PlayerService {
     }
 
     get maxHealth(): number {
-        return this.vitaility * 5;
+        return parseInt(this.playerData['_maxHealth']);
     }
 
     get day(): number {
         return parseInt(this.playerData['_day']);
     }
 
-    get damage(): number {
-        return this.strength * 1;
+    get blockNumber(): number {
+        return parseInt(this.playerData['_blockNumber']);
     }
 
-    get deadUntil(): number {
-        return parseInt(this.playerData['_deadUntil']);
+    get damage(): number {
+        return parseInt(this.playerData['_damage']);
+    }
+
+    get regeneration(): number {
+        return parseInt(this.playerData['_healthPer100Blocks']) / 100;
+    }
+
+    get points(): { damage: number, health: number, regeneration: number } {
+        return {
+            damage: parseInt(this.playerData['_damagePoints']),
+            health: parseInt(this.playerData['_healthPoints']),
+            regeneration: parseInt(this.playerData['_regenerationPoints'])
+        }
+    }
+
+    get maxPoints() : number {
+        return (this.level - 1) * 5 - (this.points.damage + this.points.health + this.points.regeneration);
+    }
+
+    get deadOn(): number {
+        return parseInt(this.playerData['_deadOn']);
+    }
+
+    get isDead():boolean {
+        return this.deadOn == this.day;
     }
 }

@@ -28,17 +28,24 @@ export class ContractService {
   }
 
   public register(username: string): Promise<Transaction> {
-    let hexUsename = Utils.stringToHex(username.toLowerCase());
-    let method = this.contract.methods.register(hexUsename);
+    return new Promise((resolve, reject) => {
+      let hexUsename = Utils.stringToHex(username.toLowerCase());
+      let method = this.contract.methods.register(hexUsename);
 
-    let tx: Transaction = {
-      label: 'User registration',
-      to: this.env.contract.address,
-      gasLimit: 300000,
-      data: method.encodeABI()
-    }
+      method.estimateGas({ from: this.wallet.getAddress() })
+        .then((gasAmount: number) => {
+          let tx: Transaction = {
+            label: 'Registration',
+            to: this.env.contract.address,
+            gasLimit: gasAmount,
+            data: method.encodeABI()
+          };
 
-    return this.wallet.sendTransaction(tx);
+          this.wallet.sendTransaction(tx).then(resolve).catch(reject);
+
+        })
+        .catch(reject);
+    });
   }
 
 
@@ -56,16 +63,50 @@ export class ContractService {
     });
   }
 
+  public getBattles(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.contract.methods.getBattles().call({ from: this.wallet.getAddress() })
+        .then(resolve).catch(reject);
+    });
+  }
+
   public attackCreature(cureatureIdx: number): Promise<Transaction> {
-    let method = this.contract.methods.fightCreature(cureatureIdx);
+    return new Promise((resolve, reject) => {
+      let method = this.contract.methods.attackCreature(cureatureIdx);
 
-    let tx: Transaction = {
-      label: 'Attack creature',
-      to: this.env.contract.address,
-      gasLimit: 150000,
-      data: method.encodeABI()
-    }
+      method.estimateGas({ from: this.wallet.getAddress() })
+        .then((gasAmount: number) => {
+          let tx: Transaction = {
+            label: 'Attack creature #' + (cureatureIdx + 1),
+            to: this.env.contract.address,
+            gasLimit: gasAmount,
+            data: method.encodeABI()
+          };
 
-    return this.wallet.sendTransaction(tx);
+          this.wallet.sendTransaction(tx).then(resolve).catch(reject);
+
+        })
+        .catch(reject);
+    });
+  }
+
+  public setPoints(damage: number, health: number, spirit: number): Promise<Transaction> {
+    return new Promise((resolve, reject) => {
+      let method = this.contract.methods.setPoints(damage, health, spirit);
+
+      method.estimateGas({ from: this.wallet.getAddress() })
+        .then((gasAmount: number) => {
+          let tx: Transaction = {
+            label: 'Set points',
+            to: this.env.contract.address,
+            gasLimit: gasAmount,
+            data: method.encodeABI()
+          };
+
+          this.wallet.sendTransaction(tx).then(resolve).catch(reject);
+
+        })
+        .catch(reject);
+    });
   }
 }

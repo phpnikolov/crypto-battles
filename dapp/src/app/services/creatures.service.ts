@@ -34,17 +34,42 @@ export class CreaturesService {
     }
   };
 
-  private readonly countValuelist: { [value: number]: string } = {
-    0: 'Unknown',
-    1: 'Few',
-    2: 'Several',
-    3: 'Pack',
-    4: 'Lots',
-    5: 'Horde',
+  private readonly countValuelist: { [value: number]: any } = {
+    0: {
+      label: 'Unknown',
+      min: 0,
+      max: 9999
+    },
+    1: {
+      label: 'Few',
+      min: 1,
+      max: 4
+    },
+    2: {
+      label: 'Several',
+      min: 5,
+      max: 9
+    },
+    3: {
+      label: 'Pack',
+      min: 10,
+      max: 19
+    },
+    4: {
+      label: 'Lots',
+      min: 20,
+      max: 49
+    },
+    5:  {
+      label: 'Horde',
+      min: 50,
+      max: 99
+    },
   }
 
 
-  private _creatures: { data: Creature, count: string | undefined }[] = [];
+  private _creatures: { data: Creature, count: string }[] = [];
+  private _battles: { data: Creature, units: number | undefined}[] = [];
 
   public constructor(
     private wallet: WalletService,
@@ -65,31 +90,48 @@ export class CreaturesService {
 
     this.contract.getCreatures()
       .then((creaturesData) => {
-        this._creatures = [];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 5; i++) {
           const cType = creaturesData['_cType' + i];
           const cCount = creaturesData['_cCount' + i];
 
-
-          if (cType == 0) {
-            // this creature is dead
-            this._creatures.push(undefined);
-            continue;
-          }
-
-          this._creatures.push({
+          this._creatures[i] = {
             data: this.creaturesValuelist[cType],
             count: this.countValuelist[cCount]
-          });
+          };
         }
       })
       .catch(err => {
         this.dialogService.addError(err);
+      });
+
+      this.contract.getBattles()
+      .then((creaturesData) => {
+        for (let i = 0; i < 5; i++) {
+          const cType = creaturesData['_cType' + i];
+
+          if (cType == 0){
+            // there is no battle today
+            this._battles[i] = undefined;
+            continue;
+          }
+
+          this._battles[i] = {
+            data: this.creaturesValuelist[cType],
+            units: creaturesData['_uinits' + i]
+          };
+        }
       })
+      .catch(err => {
+        this.dialogService.addError(err);
+      });
   }
 
   get creatures() {
     return this._creatures;
+  }
+
+  get battles() {
+    return this._battles;
   }
 
 }

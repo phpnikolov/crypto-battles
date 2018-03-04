@@ -1,0 +1,4 @@
+.txs-list {
+    max-height: 370px;
+    overflow: auto;
+}
