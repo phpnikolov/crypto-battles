@@ -1,0 +1,29 @@
+<h2 mat-dialog-title [ngClass]="{'text-danger': maxPoints < 0}">You have {{maxPoints}} points</h2>
+<form (ngSubmit)="save()" [formGroup]="fg">
+    <mat-dialog-content>
+
+        <div class="form-group">
+            <label>Damage points</label>
+            <input type="number" class="form-control" formControlName="damagePoints" min="{{player.points.damage}}" max="{{damagePoints + maxPoints}}">
+            <small class="form-text text-muted">1 point = 1 damage</small>
+        </div>
+
+        <div class="form-group">
+            <label>Health points</label>
+            <input type="number" class="form-control" formControlName="healthPoints" min="{{player.points.health}}" max="{{healthPoints + maxPoints}}">
+            <small class="form-text text-muted">1 point = 5 health</small>
+        </div>
+
+        <div class="form-group">
+            <label>Regeneration points</label>
+            <input type="number" class="form-control" formControlName="regenerationPoints" min="{{player.points.regeneration}}" max="{{regenerationPoints + maxPoints}}">
+            <small class="form-text text-muted">1 point = Regenerate 0.1 health/block</small>
+        </div>
+
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-raised-button mat-dialog-close color="basic">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="maxPoints < 0 || player.maxPoints == maxPoints">Save</button>
+    </mat-dialog-actions>
+</form>

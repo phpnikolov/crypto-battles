@@ -43,6 +43,7 @@ import { DialogService } from './services/dialog.service';
 import { PromptDialog } from './dialogs/prompt/prompt.dialog';
 import { NotEnoughBalanceDialog } from './dialogs/not-enough-balance/not-enough-balance.dialog';
 import { WalletDialog } from './dialogs/wallet/wallet.dialog';
+import { PointsDialog } from './dialogs/points/points.dialog';
 
 
 
@@ -92,6 +93,7 @@ StorageService.namespace = 'crypto-battles';
     HeroPage,
     CreaturesPage,
     ShopPage,
+    PointsDialog,
    
   ],
   imports: [
@@ -120,7 +122,8 @@ StorageService.namespace = 'crypto-battles';
   entryComponents: [
     PromptDialog,
     NotEnoughBalanceDialog,
-    WalletDialog
+    WalletDialog,
+    PointsDialog
   ],
   bootstrap: [AppComponent, AlertsComponent]
 })

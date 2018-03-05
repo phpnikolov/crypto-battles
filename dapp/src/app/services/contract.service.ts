@@ -37,7 +37,7 @@ export class ContractService {
           let tx: Transaction = {
             label: 'Registration',
             to: this.env.contract.address,
-            gasLimit: gasAmount,
+            gasLimit: Math.ceil(gasAmount * 1.1),
             data: method.encodeABI()
           };
 
@@ -79,7 +79,7 @@ export class ContractService {
           let tx: Transaction = {
             label: 'Attack creature #' + (cureatureIdx + 1),
             to: this.env.contract.address,
-            gasLimit: gasAmount,
+            gasLimit: Math.ceil(gasAmount * 1.1),
             data: method.encodeABI()
           };
 
@@ -99,7 +99,7 @@ export class ContractService {
           let tx: Transaction = {
             label: 'Set points',
             to: this.env.contract.address,
-            gasLimit: gasAmount,
+            gasLimit: Math.ceil(gasAmount * 1.1),
             data: method.encodeABI()
           };
 

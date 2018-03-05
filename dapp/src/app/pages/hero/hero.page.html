@@ -2,7 +2,7 @@
 <img src="https://robohash.org/{{player.address}}?set=set2" alt="{{player.username}} avatar" class="m-auto d-block" [ngClass]="{'opacity-50': player.isDead}">
 <h4 class="text-center border-top border-secondary m-0 pt-1 pb-2">
     {{player.username}}
-    <i *ngIf="player.maxPoints > 0" class="fa fa-plus-circle text-success cur-pointer font-size-08" title="You have {{player.maxPoints}} points"></i>
+    <i [ngClass]="{'text-success' : player.maxPoints > 0}" class="fa fa-plus-circle cur-pointer font-size-08" (click)="showPointsDialog()" title="You have {{player.maxPoints}} points"></i>
 </h4>
 <div class="pos-r">
     <div id="lvl" class="bg-warning rounded-circle border border-secondary" title="Level">{{player.level}}</div>

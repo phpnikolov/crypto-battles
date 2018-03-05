@@ -44,7 +44,10 @@ contract CryptoBattles is Ownable, Random {
         unknown,
         Halfling,
         Rogue,
-        Nomad
+        Pikeman,
+        Nomad,
+        Swordman,
+        Cavalier
     }
     
     enum CreatureCount {
@@ -115,12 +118,36 @@ contract CryptoBattles is Ownable, Random {
             experience: 40 // 12 * 3.3 (50% less exp)
         });
         
-        // [Nomad]'
+        // Pikeman
+        creatures[uint8(CreatureType.Pikeman)] = Creature({
+            damage: 7,
+            health: 9,
+            gold: 32, // 16 * 2
+            experience: 60 // 12 * 5
+        });
+        
+        // Nomad
         creatures[uint8(CreatureType.Nomad)] = Creature({
             damage: 8,
             health: 16,
             gold: 32, // 24 * 1.3 (50% less gold)
             experience: 180 // 24 * 7.5 (50% more exp)
+        });
+        
+        // Swordman
+        creatures[uint8(CreatureType.Swordman)] = Creature({
+            damage: 15,
+            health: 21,
+            gold: 72, // 36 * 2
+            experience: 180 // 36 * 5
+        });
+        
+        // Cavalier
+        creatures[uint8(CreatureType.Cavalier)] = Creature({
+            damage: 20,
+            health: 40,
+            gold: 80, // 60 * 1.3 (50% less gold)
+            experience: 450 // 60 * 7.5 (50% more exp)
         });
     }
     
@@ -226,7 +253,7 @@ contract CryptoBattles is Ownable, Random {
     }
     
     
-    function getBattles(address _addr) public view returns(
+    function getBattles() public view returns(
         CreatureType _cType0,
         uint _uinits0,
         CreatureType _cType1,
@@ -238,6 +265,7 @@ contract CryptoBattles is Ownable, Random {
         CreatureType _cType4,
         uint _uinits4
     ) {
+        address _addr = msg.sender;
         uint day = getDay(_addr);
         mapping (uint8 => Battle) battles = players[_addr].lastBattles;
         
@@ -277,27 +305,56 @@ contract CryptoBattles is Ownable, Random {
         uint rand = rangedRandom(staticRand, 0, 99);
 
         if (players[_addr].level <= 5) {
-            /* <= Level 5
-             * Halfling - Several (30%)
-             * Rogue - Several (30%)
-             * Nomad - Few (30%)
-             * Halfling - Pack (10%)
+            /* Level 1-5
+             * Halfling - Several (25%)
+             * Rogue - Several (25%)
+             * Pikeman - Few (25%)
+             * Nomad - Few (25%)
              */
-            if (rand < 30) {
+            if (rand < 25) {
                 _type = CreatureType.Halfling;
                 _count = CreatureCount.Several;
             }
-            else if (rand < 60) {
+            else if (rand < 50) {
                 _type = CreatureType.Rogue;
                 _count = CreatureCount.Several;
             }
-            else if (rand < 90) {
-                _type = CreatureType.Halfling;
+            else if (rand < 75) {
+                _type = CreatureType.Pikeman;
                 _count = CreatureCount.Few;
             }
             else {
+                _type = CreatureType.Nomad;
+                _count = CreatureCount.Few;
+            }
+        }
+        else if (players[_addr].level <= 10) {
+            /* Level 5-10
+             * Halfling - Pack (20%)
+             * Rogue - Pack (20%)
+             * Pikeman - Pack (20%)
+             * Nomad - Several (20%)
+             * Swordman - Few (20%)
+             */
+            if (rand < 20) {
                 _type = CreatureType.Halfling;
                 _count = CreatureCount.Pack;
+            }
+            else if (rand < 40) {
+                _type = CreatureType.Rogue;
+                _count = CreatureCount.Pack;
+            }
+            else if (rand < 60) {
+                _type = CreatureType.Pikeman;
+                _count = CreatureCount.Pack;
+            }
+            else if (rand < 80) {
+                _type = CreatureType.Nomad;
+                _count = CreatureCount.Several;
+            }
+             else {
+                _type = CreatureType.Swordman;
+                _count = CreatureCount.Few;
             }
         }
     }
@@ -345,26 +402,56 @@ contract CryptoBattles is Ownable, Random {
         
         uint units = creatureCount2Number(cCount);
         
-        uint playerHealth = getHealth(msg.sender);
+        uint heroHealth = getHealth(msg.sender);
+        uint heroDamage = getDamage(msg.sender);
         
-        // creature health * units = total crreatures health
-        // multiply by 10000 for better decimal calculations, then devide by 10000;
-        // total crreatures health / player damage = how many attacks is needed to kill the creatures
-        // attakcs needed * creature damage = how many health player will lost
-        uint healthLost = creature.health * units * 10000 / getDamage(msg.sender) * creature.damage * units / 10000; 
+        uint creatureHealth = creature.health * units;
+        uint creatureDamage = creature.damage * units;
+        
+        uint heroAttacks = (creatureHealth / heroDamage) + (creatureHealth % heroDamage == 0 ? 0 : 1);
+        uint craturesAttacks = (heroHealth / creatureDamage) + (heroHealth % creatureDamage == 0 ? 0 : 1);
+        
+        
+        if (craturesAttacks < heroAttacks) {
+            // creature wins
+            heroHealth = 0;
+        }
+        else {
+            if (craturesAttacks > heroAttacks) {
+                // after ${hheroAttacks}, creature will be dead
+                // so it cannot attacks more
+                craturesAttacks = heroAttacks;
+            }
+            // determinate who attacks first
+            if (rangedRandom(random(), 0, 1) == 1) {
+                // hero attacks first, so creature lost 1 attack
+                craturesAttacks -= 1;
+            }
+            else {
+                // creature attacks first
+                craturesAttacks += 1;
+            }
+            
+            uint creatureDamageDone = craturesAttacks * creatureDamage;
+            
+            if (heroHealth > creatureDamageDone) {
+                // player have enough helth and wins
+                heroHealth -= creatureDamageDone;
+            }
+            else {
+                heroHealth = 0;
+            }
+        }
         
         // won
-        if (playerHealth > healthLost) {
-            uint goldWon = creature.gold * units;
-            uint experienceWon = creature.experience * units;
+        if (heroHealth > 0) {
+            players[msg.sender].health = heroHealth;
             
-            players[msg.sender].health = playerHealth - healthLost;
-            
-            players[msg.sender].gold += goldWon;
-            players[msg.sender].experience += experienceWon;
+            players[msg.sender].gold += creature.gold * units;
+            players[msg.sender].experience += creature.experience * units;
             
             syncLevel(msg.sender); // update users level after experience gain
-            
+
         
             // save Battle
             players[msg.sender].lastBattles[_creatureIdx].cType = cType;
@@ -387,6 +474,12 @@ contract CryptoBattles is Ownable, Random {
         
         // 5 points per level
         require(_damagePoints + _healthPoints + _regenerationPoints <= (players[msg.sender].level - 1) * 5);
+        
+
+        // add health because new health points
+        // don't worry if is more than max health
+        players[msg.sender].health = getHealth(msg.sender) + (5 * (_healthPoints - players[msg.sender].healthPoints));
+        players[msg.sender].lastSynced = block.number;
         
         players[msg.sender].damagePoints = _damagePoints;
         players[msg.sender].healthPoints = _healthPoints;

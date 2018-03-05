@@ -28,7 +28,7 @@ export class PlayerService {
                 this.playerData = contractData;
             })
             .catch(err => {
-                this.dialogService.addError(err);
+                this.dialogService.addError("Can't connect to Provider");
             })
     }
 

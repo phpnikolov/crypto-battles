@@ -31,7 +31,7 @@ export class WalletService {
   private ks;
   private password;
   private transactions: Transaction[] = [];
-  public gasPrice: BigInteger = bigInt(Utils.toWei('5', 'Gwei'));
+  public gasPrice: BigInteger = bigInt(Utils.toWei('0', 'Gwei'));
 
   constructor(
     private storage: StorageService,
@@ -277,7 +277,6 @@ export class WalletService {
             tx.onChange(tx);
           })
           .then((receipt) => {
-            console.log(receipt);
             tx.status = 'confirmed';
             tx.gasLimit = receipt.gasUsed;
             this.storeTransactions();

@@ -39,7 +39,7 @@ export class GamePage {
         }
       //});
     }).catch((err) => {
-      this.dialogService.addError(err);
+      this.dialogService.addError("Can't connect to Provider");
     })
   }
 
@@ -77,7 +77,6 @@ export class GamePage {
           if (tx.status === 'confirmed') {
             clearInterval(timer);
             this.dialogService.clearAlerts();
-            this.dialogService.addMessage('Welcome ' + username);
             this.init();
           }
         }

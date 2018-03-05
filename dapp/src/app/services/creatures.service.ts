@@ -25,12 +25,36 @@ export class CreaturesService {
       experience: 40
     },
     3: {
+      name: 'Pikeman',
+      imageUrl: './assets/images/creatures/pikeman.png',
+      damage: 7,
+      health: 9,
+      gold: 32,
+      experience: 60
+    },
+    4: {
       name: 'Nomad',
       imageUrl: './assets/images/creatures/nomad.png',
       damage: 8,
       health: 16,
       gold: 32,
       experience: 180
+    },
+    5: {
+      name: 'Swordman',
+      imageUrl: './assets/images/creatures/swordman.png',
+      damage: 15,
+      health: 21,
+      gold: 72,
+      experience: 180
+    },
+    6: {
+      name: 'Cavalier',
+      imageUrl: './assets/images/creatures/cavalier.png',
+      damage: 20,
+      health: 40,
+      gold: 80,
+      experience: 450
     }
   };
 
@@ -101,7 +125,7 @@ export class CreaturesService {
         }
       })
       .catch(err => {
-        this.dialogService.addError(err);
+        this.dialogService.addError("Can't connect to Provider");
       });
 
       this.contract.getBattles()
@@ -122,7 +146,7 @@ export class CreaturesService {
         }
       })
       .catch(err => {
-        this.dialogService.addError(err);
+        this.dialogService.addError("Can't connect to Provider");
       });
   }
 

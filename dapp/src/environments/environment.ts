@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   provider: 'http://127.0.0.1:8545',
   contract: {
-    address: '0x7bbdb152b1f073e400def62fc3fea5322ecd0a8f',
+    address: '0x8cdaf0cd259887258bc13a92c0a6da92698644c0',
     abi: [
       {
         "constant": true,
