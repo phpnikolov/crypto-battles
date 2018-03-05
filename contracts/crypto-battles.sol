@@ -1,7 +1,7 @@
 pragma solidity ^0.4.20;
 
 contract Ownable {
-    address private owner;
+    address internal owner;
 
     function Ownable() public {
         owner = msg.sender;
@@ -37,11 +37,9 @@ contract Random {
   
 }
 
-
-contract CryptoBattles is Ownable, Random {
-    
+contract CryptoCreatures {
     enum CreatureType {
-        unknown,
+        Uknown,
         Halfling,
         Rogue,
         Pikeman,
@@ -51,7 +49,7 @@ contract CryptoBattles is Ownable, Random {
     }
     
     enum CreatureCount {
-        unknown,
+        Uknown,
         Few, 	// 1–4
         Several,// 5–9
         Pack,	// 10–19
@@ -60,16 +58,197 @@ contract CryptoBattles is Ownable, Random {
     }
     
     struct Creature {
+        string name;
         uint damage;
         uint health;
         uint gold;
         uint experience;
     }
+
+    
+    // all creatures
+    mapping (uint8 => Creature) public creatures;
+    
+    function CryptoCreatures() public {
+        // base formula
+        // gold = (damage + health) * 2
+        // experience = (damage + health) * 5
+        
+        // Halfling
+        creatures[uint8(CreatureType.Halfling)] = Creature({
+            name: "Halfling",
+            damage: 3,
+            health: 5,
+            gold: 16, // 8 * 2
+            experience: 40 // 8 * 5
+        });
+        
+        // Rogue
+        creatures[uint8(CreatureType.Rogue)] = Creature({
+            name: "Rogue",
+            damage: 7,
+            health: 5,
+            gold: 36, // 12 * 3 (50% more gold)
+            experience: 40 // 12 * 3.3 (50% less exp)
+        });
+        
+        // Pikeman
+        creatures[uint8(CreatureType.Pikeman)] = Creature({
+            name: "Pikeman",
+            damage: 7,
+            health: 9,
+            gold: 32, // 16 * 2
+            experience: 60 // 12 * 5
+        });
+        
+        // Nomad
+        creatures[uint8(CreatureType.Nomad)] = Creature({
+            name: "Nomad",
+            damage: 8,
+            health: 16,
+            gold: 32, // 24 * 1.3 (50% less gold)
+            experience: 180 // 24 * 7.5 (50% more exp)
+        });
+        
+        // Swordman
+        creatures[uint8(CreatureType.Swordman)] = Creature({
+            name: "Swordman",
+            damage: 15,
+            health: 21,
+            gold: 72, // 36 * 2
+            experience: 180 // 36 * 5
+        });
+        
+        // Cavalier
+        creatures[uint8(CreatureType.Cavalier)] = Creature({
+            name: "Cavalier",
+            damage: 20,
+            health: 40,
+            gold: 80, // 60 * 1.3 (50% less gold)
+            experience: 450 // 60 * 7.5 (50% more exp)
+        });
+    }
+    
+    function generateCreature(uint _level, uint _random) public pure returns(CreatureType _cType, CreatureCount _cCount){
+
+        uint rand = _random % 100;
+        
+        if (_level <= 5) {
+            /* Level 1-5
+             * Halfling - Several (25%)
+             * Rogue - Several (25%)
+             * Pikeman - Few (25%)
+             * Nomad - Few (25%)
+             */
+            if (rand < 25) {
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Several;
+            }
+            else if (rand < 50) {
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Several;
+            }
+            else if (rand < 75) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Few;
+            }
+            else {
+                _cType = CreatureType.Nomad;
+                _cCount = CreatureCount.Few;
+            }
+        }
+        else if (_level <= 10) {
+            /* Level 5-10
+             * Halfling - Pack (20%)
+             * Rogue - Pack (20%)
+             * Pikeman - Pack (20%)
+             * Nomad - Several (20%)
+             * Swordman - Few (20%)
+             */
+            if (rand < 20) {
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Pack;
+            }
+            else if (rand < 40) {
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Pack;
+            }
+            else if (rand < 60) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Pack;
+            }
+            else if (rand < 80) {
+                _cType = CreatureType.Nomad;
+                _cCount = CreatureCount.Several;
+            }
+             else {
+                _cType = CreatureType.Swordman;
+                _cCount = CreatureCount.Few;
+            }
+        }
+    }
+    
+}
+
+contract CryptoItems {
+    enum ItemType {
+        unknown,
+        Weapon,
+        Helm,
+        Chain,
+        Ring
+    }
+    
+    struct Item {
+        ItemType iType;
+        uint damagePoints;
+        uint healthPoints;
+        uint regenerationPoints;
+    }
+    
+    function generateItem(uint _level, uint _random) internal pure returns(Item _item) {
+        
+        _item.iType = ItemType(1 + (_random % 4));
+        
+        
+        uint maxDamagePointsPerLvl = 0;
+        uint maxHealthPointsPerLvl = 0;
+        uint maxRegenerationPointsPerLvl = 0;
+        
+        if (_item.iType == ItemType.Weapon) {
+            maxDamagePointsPerLvl = 4;
+        }
+        else if (_item.iType == ItemType.Helm) {
+            maxHealthPointsPerLvl = 3;
+            maxRegenerationPointsPerLvl = 2;
+        }
+        else if (_item.iType == ItemType.Chain) {
+            maxHealthPointsPerLvl = 4;
+        }
+        else if (_item.iType == ItemType.Ring) {
+            maxRegenerationPointsPerLvl = 4;
+        }
+        
+        // 25% - 100%
+        uint luck = 100 - (_random % 76);
+
+        _item.damagePoints = (maxDamagePointsPerLvl * (_level + 4)) * luck / 100;
+        _item.healthPoints = (maxHealthPointsPerLvl * (_level + 4)) * luck / 100;
+        _item.regenerationPoints = (maxRegenerationPointsPerLvl * (_level + 4)) * luck / 100;
+        
+        
+    }
+}
+
+contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
+    
+    // ~2h
+    uint roundLength = 500; // blocks
     
     struct Battle {
         CreatureType cType;
         uint units;
-        uint day;
+        uint round;
     }
     
     struct Player {
@@ -88,68 +267,17 @@ contract CryptoBattles is Ownable, Random {
         // creature index => last battle
         mapping (uint8 => Battle) lastBattles;
         
-        uint deadOn; // day
+        // items
+        mapping (uint8 => Item) items;
+        
+        
+        
+        uint deadOn; // round
     }
 
     // all registered players
     mapping (address => Player) private players;
     
-    // all creatures
-    mapping (uint8 => Creature) private creatures;
-    
-    function CryptoBattles() public {
-        // base formula
-        // gold = (damage + health) * 2
-        // experience = (damage + health) * 5
-        
-        // Halfling
-        creatures[uint8(CreatureType.Halfling)] = Creature({
-            damage: 3,
-            health: 5,
-            gold: 16, // 8 * 2
-            experience: 40 // 8 * 5
-        });
-        
-        // Rogue
-        creatures[uint8(CreatureType.Rogue)] = Creature({
-            damage: 7,
-            health: 5,
-            gold: 36, // 12 * 3 (50% more gold)
-            experience: 40 // 12 * 3.3 (50% less exp)
-        });
-        
-        // Pikeman
-        creatures[uint8(CreatureType.Pikeman)] = Creature({
-            damage: 7,
-            health: 9,
-            gold: 32, // 16 * 2
-            experience: 60 // 12 * 5
-        });
-        
-        // Nomad
-        creatures[uint8(CreatureType.Nomad)] = Creature({
-            damage: 8,
-            health: 16,
-            gold: 32, // 24 * 1.3 (50% less gold)
-            experience: 180 // 24 * 7.5 (50% more exp)
-        });
-        
-        // Swordman
-        creatures[uint8(CreatureType.Swordman)] = Creature({
-            damage: 15,
-            health: 21,
-            gold: 72, // 36 * 2
-            experience: 180 // 36 * 5
-        });
-        
-        // Cavalier
-        creatures[uint8(CreatureType.Cavalier)] = Creature({
-            damage: 20,
-            health: 40,
-            gold: 80, // 60 * 1.3 (50% less gold)
-            experience: 450 // 60 * 7.5 (50% more exp)
-        });
-    }
     
     modifier isPlayer() {
         require(isRegistered(msg.sender) == true);
@@ -172,20 +300,19 @@ contract CryptoBattles is Ownable, Random {
             experience: 0,
             health : 100,
             
-            damagePoints:0,
-            healthPoints:0,
-            regenerationPoints:0,
+            damagePoints: 0,
+            healthPoints: 0,
+            regenerationPoints: 0,
             deadOn: 0
         });
     }
     
-    // day length 1000 blocks (~4 hours)
-    function getDay(address _addr) private view returns(uint) {
-        return 1 + (block.number - players[_addr].registrationBlock) / 1000;
+    function getRound(address _addr) private view returns(uint) {
+        return 1 + (block.number - players[_addr].registrationBlock) / roundLength;
     }
     
     function isDead(address _addr) private view returns(bool) {
-        return players[_addr].deadOn == getDay(_addr);
+        return players[_addr].deadOn == getRound(_addr);
     }
     
     // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=40*(x+-+1)(x+%2B+8);+x+from+1+to+99
@@ -203,11 +330,29 @@ contract CryptoBattles is Ownable, Random {
     function getHealthPer100Block(address _addr) private view returns(uint) {
         // 1 spirit = 0.1 health per block (10 health per 100block)
         
-        return 100 + (players[_addr].regenerationPoints) * 10;
+        return 100 + (
+            players[_addr].regenerationPoints + 
+            players[_addr].items[0].regenerationPoints + 
+            players[_addr].items[1].regenerationPoints + 
+            players[_addr].items[2].regenerationPoints + 
+            players[_addr].items[3].regenerationPoints + 
+            players[_addr].items[4].regenerationPoints + 
+            players[_addr].items[5].regenerationPoints
+        ) * 10;
     }
     
     function getMaxHealth(address _addr) private view returns(uint) {
-        return 100 + (players[_addr].healthPoints) * 5;
+        return 
+            100 + // base health
+            (
+                players[_addr].healthPoints +
+                players[_addr].items[0].healthPoints + 
+                players[_addr].items[1].healthPoints + 
+                players[_addr].items[2].healthPoints + 
+                players[_addr].items[3].healthPoints + 
+                players[_addr].items[4].healthPoints + 
+                players[_addr].items[5].healthPoints
+            ) * 5;
     }
     
     function getHealth(address _addr) private view returns(uint) {
@@ -225,7 +370,16 @@ contract CryptoBattles is Ownable, Random {
     }
     
     function getDamage(address _addr) private view returns(uint) {
-        return 35 + (players[_addr].damagePoints) * 1;
+        return 
+            35 + // hero vase
+            players[_addr].damagePoints + // damage points
+            players[_addr].items[0].damagePoints + // item 0
+            players[_addr].items[1].damagePoints + // item 1
+            players[_addr].items[2].damagePoints + // item 2
+            players[_addr].items[3].damagePoints + // item 3
+            players[_addr].items[4].damagePoints + // item 4
+            players[_addr].items[5].damagePoints;  // item 5
+
     }
 
     function creatureCount2Number(CreatureCount _creatureCount) private returns(uint) {
@@ -253,7 +407,7 @@ contract CryptoBattles is Ownable, Random {
     }
     
     
-    function getBattles() public view returns(
+    function getBattlesHistory() isPlayer public view returns(
         CreatureType _cType0,
         uint _uinits0,
         CreatureType _cType1,
@@ -266,30 +420,30 @@ contract CryptoBattles is Ownable, Random {
         uint _uinits4
     ) {
         address _addr = msg.sender;
-        uint day = getDay(_addr);
+        uint round = getRound(_addr);
         mapping (uint8 => Battle) battles = players[_addr].lastBattles;
         
-        if (players[_addr].lastBattles[0].day == day) {
+        if (players[_addr].lastBattles[0].round == round) {
             _cType0 = battles[0].cType;
             _uinits0 = battles[0].units;
         }
         
-        if (battles[1].day == day) {
+        if (battles[1].round == round) {
             _cType1 = battles[1].cType;
             _uinits1 = battles[1].units;
         }
         
-        if (battles[2].day == day) {
+        if (battles[2].round == round) {
             _cType2 = battles[2].cType;
             _uinits2 = battles[2].units;
         }
         
-        if (battles[3].day == day) {
+        if (battles[3].round == round) {
             _cType3 = battles[3].cType;
             _uinits3 = battles[3].units;
         }
         
-        if (battles[4].day == day) {
+        if (battles[4].round == round) {
             _cType4 = battles[4].cType;
             _uinits4 = battles[4].units;
         }
@@ -297,71 +451,16 @@ contract CryptoBattles is Ownable, Random {
     
     
 
-    function getCreature(address _addr, uint day, uint8 _creatureIdx) private view returns(CreatureType _type, CreatureCount _count){
-        require(_creatureIdx < 5);
-        
-        // this random will return same number for current day (1000 blocks)
-        uint staticRand = uint256(keccak256(_creatureIdx, day, _addr));
-        uint rand = rangedRandom(staticRand, 0, 99);
+    function getBattle(address _addr, uint round, uint8 _battleId) private view returns(CreatureType _cType, CreatureCount _cCount){
+        // this random will return same number for current round
+        uint staticRand = uint256(keccak256(_battleId, round, _addr));
 
-        if (players[_addr].level <= 5) {
-            /* Level 1-5
-             * Halfling - Several (25%)
-             * Rogue - Several (25%)
-             * Pikeman - Few (25%)
-             * Nomad - Few (25%)
-             */
-            if (rand < 25) {
-                _type = CreatureType.Halfling;
-                _count = CreatureCount.Several;
-            }
-            else if (rand < 50) {
-                _type = CreatureType.Rogue;
-                _count = CreatureCount.Several;
-            }
-            else if (rand < 75) {
-                _type = CreatureType.Pikeman;
-                _count = CreatureCount.Few;
-            }
-            else {
-                _type = CreatureType.Nomad;
-                _count = CreatureCount.Few;
-            }
-        }
-        else if (players[_addr].level <= 10) {
-            /* Level 5-10
-             * Halfling - Pack (20%)
-             * Rogue - Pack (20%)
-             * Pikeman - Pack (20%)
-             * Nomad - Several (20%)
-             * Swordman - Few (20%)
-             */
-            if (rand < 20) {
-                _type = CreatureType.Halfling;
-                _count = CreatureCount.Pack;
-            }
-            else if (rand < 40) {
-                _type = CreatureType.Rogue;
-                _count = CreatureCount.Pack;
-            }
-            else if (rand < 60) {
-                _type = CreatureType.Pikeman;
-                _count = CreatureCount.Pack;
-            }
-            else if (rand < 80) {
-                _type = CreatureType.Nomad;
-                _count = CreatureCount.Several;
-            }
-             else {
-                _type = CreatureType.Swordman;
-                _count = CreatureCount.Few;
-            }
-        }
+        (_cType, _cCount) = generateCreature(players[_addr].level, staticRand);
     }
     
     
     // return daily creatures
-    function getCreatures() isPlayer public view returns(
+    function getBattles() isPlayer public view returns(
         CreatureType _cType0,
         CreatureCount _cCount0,
         CreatureType _cType1,
@@ -373,30 +472,30 @@ contract CryptoBattles is Ownable, Random {
         CreatureType _cType4,
         CreatureCount _cCount4
     ){
-        uint today = getDay(msg.sender);
-        
-       (_cType0, _cCount0) = getCreature(msg.sender, today, 0);
-       (_cType1, _cCount1) = getCreature(msg.sender, today, 1);
-       (_cType2, _cCount2) = getCreature(msg.sender, today, 2);
-       (_cType3, _cCount3) = getCreature(msg.sender, today, 3);
-       (_cType4, _cCount4) = getCreature(msg.sender, today, 4);
+        uint round = getRound(msg.sender);
+
+        (_cType0, _cCount0) = getBattle(msg.sender, round, 0);
+        (_cType1, _cCount1) = getBattle(msg.sender, round, 1);
+        (_cType2, _cCount2) = getBattle(msg.sender, round, 2);
+        (_cType3, _cCount3) = getBattle(msg.sender, round, 3);
+        (_cType4, _cCount4) = getBattle(msg.sender, round, 4);
     }
     
-    function attackCreature(uint8 _creatureIdx) isPlayer public {
+    function fight(uint8 _battleId) isPlayer public {
         require(!isDead(msg.sender));
         
-        // acepted creatures 0-6
-        require(_creatureIdx < 6);
+        // acepted battles 0-4
+        require(_battleId < 5);
         
-        uint today = getDay(msg.sender);
+        uint round = getRound(msg.sender);
         
-        // check if this creature is attacked today
-        require(players[msg.sender].lastBattles[_creatureIdx].day < today);
+        // check if this creature is attacked this round
+        require(players[msg.sender].lastBattles[_battleId].round < round);
   
         CreatureType cType;
         CreatureCount cCount;
         
-        (cType, cCount) = getCreature(msg.sender, today, _creatureIdx);
+        (cType, cCount) = getBattle(msg.sender, round, _battleId);
 
         Creature memory creature = creatures[uint8(cType)];
         
@@ -454,13 +553,13 @@ contract CryptoBattles is Ownable, Random {
 
         
             // save Battle
-            players[msg.sender].lastBattles[_creatureIdx].cType = cType;
-            players[msg.sender].lastBattles[_creatureIdx].units = units;
-            players[msg.sender].lastBattles[_creatureIdx].day = today;
+            players[msg.sender].lastBattles[_battleId].cType = cType;
+            players[msg.sender].lastBattles[_battleId].units = units;
+            players[msg.sender].lastBattles[_battleId].round = round;
         }
         else {
-             // players will be dead until next day
-            players[msg.sender].deadOn = today;
+             // players will be dead until next round
+            players[msg.sender].deadOn = round;
             players[msg.sender].health = getMaxHealth(msg.sender);
         }
         
@@ -475,21 +574,20 @@ contract CryptoBattles is Ownable, Random {
         // 5 points per level
         require(_damagePoints + _healthPoints + _regenerationPoints <= (players[msg.sender].level - 1) * 5);
         
-
-        // add health because new health points
-        // don't worry if is more than max health
-        players[msg.sender].health = getHealth(msg.sender) + (5 * (_healthPoints - players[msg.sender].healthPoints));
-        players[msg.sender].lastSynced = block.number;
-        
         players[msg.sender].damagePoints = _damagePoints;
         players[msg.sender].healthPoints = _healthPoints;
+        
+        // sync health before adding new regeneration points
+        players[msg.sender].health = getHealth(msg.sender);
+        players[msg.sender].lastSynced = block.number;
+        
         players[msg.sender].regenerationPoints = _regenerationPoints;
     }
     
     function getPlayer() isPlayer public view returns(
         bytes12 _username,
         uint _level,
-        uint _day,
+        uint _round,
         uint _gold,
         uint _experience,
         uint _maxHealth,
@@ -505,7 +603,7 @@ contract CryptoBattles is Ownable, Random {
         address _addr = msg.sender;
         _username = players[_addr].username;
         _level = players[_addr].level;
-        _day = getDay(_addr);
+        _round = getRound(_addr);
         _gold = players[_addr].gold;
         _experience = players[_addr].experience;
         _maxHealth = getMaxHealth(_addr);
@@ -517,5 +615,101 @@ contract CryptoBattles is Ownable, Random {
         _regenerationPoints = players[_addr].regenerationPoints;
         _deadOn = players[_addr].deadOn;
         _blockNumber = block.number;
+    }
+    
+    
+    
+    function craftItem(address _addr, uint _round, uint8 _itemId) private view returns(Item _item, uint _price){
+        // this random will change every 100 blocks or level change
+        uint staticRand = uint256(keccak256(_itemId, _round, _addr));
+    
+        _item = generateItem(players[_addr].level, staticRand);
+        
+        uint cumulativeStats = _item.damagePoints + _item.healthPoints + _item.regenerationPoints;
+        
+        // formula: http://www.wolframalpha.com/input/?i=300%2B5*x*x;+x+from+5+to+100
+        _price = 300 + 5 * cumulativeStats * cumulativeStats;
+    }
+    
+    // item code
+    // regeneration = code % 1000
+    // health = (code - regeneration) % (1000 * 1000)
+    // damage = (code - regeneration - health) % (1000 * 1000 * 1000)
+    // type = (code - regeneration - health - damage)
+    function item2code(Item _item) private pure returns(uint) {
+        uint regeneration = _item.regenerationPoints % 1000;
+        uint health = 1000 * (_item.healthPoints % 1000);
+        uint damage = 1000 * 1000 * (_item.damagePoints % 1000);
+        uint iType = 1000 * 1000 * 1000 * (uint8(_item.iType) % 1000);
+        return iType + damage + health + regeneration;
+    }
+    
+    
+    
+    function shop() isPlayer public view returns(
+        uint _itemCode0,
+        uint _price0,
+        uint _itemCode1,
+        uint _price1,
+        uint _itemCode2,
+        uint _price2,
+        uint _itemCode3,
+        uint _price3,
+        uint _itemCode4,
+        uint _price4,
+        uint _itemCode5,
+        uint _price5
+    ) {
+        uint round = getRound(msg.sender);
+        Item memory item;
+        (item, _price0) = craftItem(msg.sender, round, 0);
+        _itemCode0 = item2code(item);
+        
+        (item, _price1) = craftItem(msg.sender, round, 1);
+        _itemCode1 = item2code(item);
+        
+        (item, _price2) = craftItem(msg.sender, round, 2);
+        _itemCode2 = item2code(item);
+        
+        (item, _price3) = craftItem(msg.sender, round, 3);
+        _itemCode3 = item2code(item);
+        
+        (item, _price4) = craftItem(msg.sender, round, 4);
+        _itemCode4 = item2code(item);
+        
+        (item, _price5) = craftItem(msg.sender, round, 5);
+        _itemCode5 = item2code(item);
+    }
+    
+    function buyItem(uint8 _itemId, uint _round) isPlayer public {
+        require(_itemId < 6);
+        
+        uint round = getRound(msg.sender);
+        
+        // validate that user want to buy this item, not item from previous round
+        require(round == _round);
+        
+        Item memory item;
+        uint price;
+        (item, price) = craftItem(msg.sender, round, _itemId);
+        
+        require(price <= players[msg.sender].gold);
+        require(players[msg.sender].gold - price < players[msg.sender].gold);
+        
+        for (uint8 i = 0; i < 7; i++) {
+            // throw error if there is no free spot
+            require(i < 6);
+            
+            if (players[msg.sender].items[i].iType == ItemType.unknown) {
+                // free spot
+                players[msg.sender].gold -= price;
+                players[msg.sender].items[i] = item;
+                break;
+            }
+        }
+    }
+    
+    function kill() onlyOwner public {
+        selfdestruct(owner);
     }
 }
