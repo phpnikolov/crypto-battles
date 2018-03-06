@@ -13,6 +13,44 @@ contract Ownable {
     }
 }
 
+contract Zipper {
+
+    
+    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) public pure returns(uint _zipUint16) {
+        // uint24 can hold 16,777,215
+        uint maxSize = 16777215;
+        _zipUint16 = 
+            (_p0 * maxSize**0) +
+            (_p1 * maxSize**1) + 
+            (_p2 * maxSize**2) + 
+            (_p3 * maxSize**3) + 
+            (_p4 * maxSize**4);
+    }
+    
+    function unzipUint24(uint _zipUint24)  public pure returns(uint24, uint24, uint24, uint24, uint24) {
+            // uint24 can hold 16,777,215
+            uint maxSize = 16777215;
+            
+            uint24 _p0 = uint24(_zipUint24 % maxSize);
+            _zipUint24 = (_zipUint24 - _p0) / maxSize;
+            
+            uint24 _p1 = uint24(_zipUint24 % maxSize);
+            _zipUint24 = (_zipUint24 - _p1) / maxSize;
+            
+            uint24 _p2 = uint24(_zipUint24 % maxSize);
+            _zipUint24 = (_zipUint24 - _p2) / maxSize;
+            
+            uint24 _p3 = uint24(_zipUint24 % maxSize);
+            _zipUint24 = (_zipUint24 - _p3) / maxSize;
+            
+            uint24 _p4 = uint24(_zipUint24 % maxSize);
+            _zipUint24 = (_zipUint24 - _p4) / maxSize;
+            
+            return (_p0, _p1, _p2, _p3, _p4);
+            
+        }
+}
+
 contract Random {
 
     uint private lastRandom ;
@@ -55,6 +93,7 @@ contract CryptoCreatures {
         Pack,	// 10–19
         Lots,	// 20–49
         Horde	// 50–99
+        // max 255!!!
     }
     
     struct Creature {
@@ -201,9 +240,9 @@ contract CryptoItems {
     
     struct Item {
         ItemType iType;
-        uint damagePoints;
-        uint healthPoints;
-        uint regenerationPoints;
+        uint16 damagePoints;
+        uint16 healthPoints;
+        uint16 regenerationPoints;
     }
     
     function generateItem(uint _level, uint _random) internal pure returns(Item _item) {
@@ -232,23 +271,20 @@ contract CryptoItems {
         // 25% - 100%
         uint luck = 100 - (_random % 76);
 
-        _item.damagePoints = (maxDamagePointsPerLvl * (_level + 4)) * luck / 100;
-        _item.healthPoints = (maxHealthPointsPerLvl * (_level + 4)) * luck / 100;
-        _item.regenerationPoints = (maxRegenerationPointsPerLvl * (_level + 4)) * luck / 100;
+        _item.damagePoints = uint16(maxDamagePointsPerLvl * _level * luck / 100);
+        _item.healthPoints = uint16(maxHealthPointsPerLvl * _level * luck / 100);
+        _item.regenerationPoints = uint16(maxRegenerationPointsPerLvl * _level * luck / 100);
         
         
     }
 }
 
-contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
-    
-    // ~2h
-    uint roundLength = 500; // blocks
+contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems, Zipper {
     
     struct Battle {
         CreatureType cType;
-        uint units;
-        uint round;
+        uint8 units;
+        uint24 round;
     }
     
     struct Player {
@@ -270,7 +306,7 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
         // items
         mapping (uint8 => Item) items;
         
-        
+        uint shoppingOn; // round (user can shop once in per round)  
         
         uint deadOn; // round
     }
@@ -303,12 +339,14 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
             damagePoints: 0,
             healthPoints: 0,
             regenerationPoints: 0,
+            shoppingOn: 0,
             deadOn: 0
         });
     }
-    
+
+    // new round every 500 blocks (~2h)
     function getRound(address _addr) private view returns(uint) {
-        return 1 + (block.number - players[_addr].registrationBlock) / roundLength;
+        return 1 + (block.number - players[_addr].registrationBlock) / 500;
     }
     
     function isDead(address _addr) private view returns(bool) {
@@ -522,7 +560,7 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
                 craturesAttacks = heroAttacks;
             }
             // determinate who attacks first
-            if (rangedRandom(random(), 0, 1) == 1) {
+            if (random() % 1 == 1) {
                 // hero attacks first, so creature lost 1 attack
                 craturesAttacks -= 1;
             }
@@ -554,8 +592,8 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
         
             // save Battle
             players[msg.sender].lastBattles[_battleId].cType = cType;
-            players[msg.sender].lastBattles[_battleId].units = units;
-            players[msg.sender].lastBattles[_battleId].round = round;
+            players[msg.sender].lastBattles[_battleId].units = uint8(units);
+            players[msg.sender].lastBattles[_battleId].round = uint24(round);
         }
         else {
              // players will be dead until next round
@@ -597,8 +635,8 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
         uint _damagePoints,
         uint _healthPoints,
         uint _regenerationPoints,
-        uint _deadOn,
-        uint _blockNumber
+        uint _shoppingOn,
+        uint _deadOn
     ){
         address _addr = msg.sender;
         _username = players[_addr].username;
@@ -614,84 +652,65 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
         _healthPoints = players[_addr].healthPoints;
         _regenerationPoints = players[_addr].regenerationPoints;
         _deadOn = players[_addr].deadOn;
-        _blockNumber = block.number;
+        _shoppingOn = players[_addr].shoppingOn;
     }
     
     
     
-    function craftItem(address _addr, uint _round, uint8 _itemId) private view returns(Item _item, uint _price){
+    function getItem(address _addr, uint _round, uint8 _itemId) private view returns(Item){
         // this random will change every 100 blocks or level change
         uint staticRand = uint256(keccak256(_itemId, _round, _addr));
     
-        _item = generateItem(players[_addr].level, staticRand);
-        
+        return generateItem(players[_addr].level + 4, staticRand);
+    }
+    
+    function getItemPrice(Item _item) private pure returns(uint24) {
         uint cumulativeStats = _item.damagePoints + _item.healthPoints + _item.regenerationPoints;
         
         // formula: http://www.wolframalpha.com/input/?i=300%2B5*x*x;+x+from+5+to+100
-        _price = 300 + 5 * cumulativeStats * cumulativeStats;
+        return uint24(300 + 5 * cumulativeStats * cumulativeStats);
     }
     
-    // item code
-    // regeneration = code % 1000
-    // health = (code - regeneration) % (1000 * 1000)
-    // damage = (code - regeneration - health) % (1000 * 1000 * 1000)
-    // type = (code - regeneration - health - damage)
-    function item2code(Item _item) private pure returns(uint) {
-        uint regeneration = _item.regenerationPoints % 1000;
-        uint health = 1000 * (_item.healthPoints % 1000);
-        uint damage = 1000 * 1000 * (_item.damagePoints % 1000);
-        uint iType = 1000 * 1000 * 1000 * (uint8(_item.iType) % 1000);
-        return iType + damage + health + regeneration;
-    }
-    
-    
-    
-    function shop() isPlayer public view returns(
-        uint _itemCode0,
-        uint _price0,
-        uint _itemCode1,
-        uint _price1,
-        uint _itemCode2,
-        uint _price2,
-        uint _itemCode3,
-        uint _price3,
-        uint _itemCode4,
-        uint _price4,
-        uint _itemCode5,
-        uint _price5
-    ) {
+    // zip order - type, damage, health, regeneration, price
+    function shop() isPlayer public view returns(uint _itemZip0, uint _itemZip1, uint _itemZip2, uint _itemZip3, uint _itemZip4) {
         uint round = getRound(msg.sender);
         Item memory item;
-        (item, _price0) = craftItem(msg.sender, round, 0);
-        _itemCode0 = item2code(item);
+        uint24 price;
         
-        (item, _price1) = craftItem(msg.sender, round, 1);
-        _itemCode1 = item2code(item);
+        item = getItem(msg.sender, round, 0);
+        price = getItemPrice(item);
+        _itemZip0 = zipUint24(uint24(item.iType), item.damagePoints, item.healthPoints, item.regenerationPoints, price);
         
-        (item, _price2) = craftItem(msg.sender, round, 2);
-        _itemCode2 = item2code(item);
+        item = getItem(msg.sender, round, 1);
+        price = getItemPrice(item);
+        _itemZip1 = zipUint24(uint24(item.iType), item.damagePoints, item.healthPoints, item.regenerationPoints, price);
         
-        (item, _price3) = craftItem(msg.sender, round, 3);
-        _itemCode3 = item2code(item);
+        item = getItem(msg.sender, round, 2);
+        price = getItemPrice(item);
+        _itemZip2 = zipUint24(uint24(item.iType), item.damagePoints, item.healthPoints, item.regenerationPoints, price);
         
-        (item, _price4) = craftItem(msg.sender, round, 4);
-        _itemCode4 = item2code(item);
+        item = getItem(msg.sender, round, 3);
+        price = getItemPrice(item);
+        _itemZip3= zipUint24(uint24(item.iType), item.damagePoints, item.healthPoints, item.regenerationPoints, price);
         
-        (item, _price5) = craftItem(msg.sender, round, 5);
-        _itemCode5 = item2code(item);
+        item = getItem(msg.sender, round, 4);
+        price = getItemPrice(item);
+        _itemZip4 = zipUint24(uint24(item.iType), item.damagePoints, item.healthPoints, item.regenerationPoints, price);
     }
     
     function buyItem(uint8 _itemId, uint _round) isPlayer public {
-        require(_itemId < 6);
+        require(_itemId < 5);
         
         uint round = getRound(msg.sender);
         
         // validate that user want to buy this item, not item from previous round
         require(round == _round);
         
-        Item memory item;
-        uint price;
-        (item, price) = craftItem(msg.sender, round, _itemId);
+        // buy item once per round
+        require(players[msg.sender].shoppingOn < _round);
+        
+        Item memory item = getItem(msg.sender, round, _itemId);
+        uint price = getItemPrice(item);
         
         require(price <= players[msg.sender].gold);
         require(players[msg.sender].gold - price < players[msg.sender].gold);
@@ -704,11 +723,17 @@ contract CryptoBattles is Ownable, Random, CryptoCreatures, CryptoItems {
                 // free spot
                 players[msg.sender].gold -= price;
                 players[msg.sender].items[i] = item;
+                players[msg.sender].shoppingOn = round;
                 break;
             }
         }
     }
     
+    uint dummy = 0;
+    function dumyPlus() public {
+        dummy++;
+    }
+ 
     function kill() onlyOwner public {
         selfdestruct(owner);
     }
