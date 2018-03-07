@@ -132,7 +132,15 @@ export class PlayerService {
         return this._info['_isDead'];
     }
     get round(): number {
-        return this._info['_round'];
+        return parseInt(this._info['_round']);
+    }
+
+    get blockNumber() : number {
+        return parseInt(this._info['_blockNumber']);
+    }
+
+    get registrationBlock(): number {
+        return parseInt(this._player['registrationBlock']);
     }
 
     get items(): Item[] {

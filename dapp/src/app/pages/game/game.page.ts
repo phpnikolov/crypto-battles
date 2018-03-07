@@ -30,14 +30,14 @@ export class GamePage {
     }
 
     this.contract.isRegistered().then((registered: boolean) => {
-      //this.wallet.unlock().then(() => {
+      this.wallet.unlock().then(() => {
         if (!registered) {
           this.register();
         }
         else {
           this.init();
         }
-      //});
+      });
     }).catch((err) => {
       this.dialogService.addError("Can't connect to Provider");
     })

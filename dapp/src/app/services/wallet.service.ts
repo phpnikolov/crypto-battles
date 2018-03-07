@@ -31,7 +31,7 @@ export class WalletService {
   private ks;
   private password;
   private transactions: Transaction[] = [];
-  public gasPrice: BigInteger = bigInt(Utils.toWei('0', 'Gwei'));
+  public gasPrice: BigInteger = bigInt(Utils.toWei('5.1', 'Gwei'));
 
   constructor(
     private storage: StorageService,
@@ -98,9 +98,6 @@ export class WalletService {
       }, reject);
 
     });
-
-
-
   }
 
   public getAddress(): string | undefined {
@@ -136,9 +133,15 @@ export class WalletService {
     return _.orderBy(this.transactions, ['timeCreated'], ['desc']);
   }
 
+  public getPendingTransactions(): Transaction[] {
+    return _.filter(this.getTransactions(), ['status', 'pending']);
+  }
+
   public getTransaction(txHash: string): Transaction {
     return _.find(this.transactions, ['txHash', txHash]);
   }
+
+  
 
   /** 
    * Unlock private key with the user password
@@ -257,13 +260,11 @@ export class WalletService {
 
         let serializedTx = ethereumTx.serialize();
 
-        this.transactions.push(tx);
-        this.storeTransactions();
-
         this.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .once('transactionHash', (txHash: string) => {
             // transaction accepted
             tx.txHash = txHash;
+            this.transactions.push(tx);
             this.storeTransactions();
             resolve(tx);
             tx.onChange(tx);

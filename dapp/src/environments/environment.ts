@@ -5,9 +5,9 @@
 
 export const environment = {
   production: false,
-  provider: 'http://127.0.0.1:8545',
+  provider: 'https://ropsten.infura.io/rsndW2tOymHA1cBffVyN',
   contract: {
-    address: '0x8cdaf0cd259887258bc13a92c0a6da92698644c0',
+    address: '0x41606e2becca8ef84c18873af24d5dfdbba9e8c4',
     abi: [
       {
         "constant": true,

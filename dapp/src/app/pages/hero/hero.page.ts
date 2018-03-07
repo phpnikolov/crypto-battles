@@ -13,7 +13,7 @@ export class HeroPage implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private player: PlayerService,
+    public player: PlayerService,
   ) { }
 
   ngOnInit() {
