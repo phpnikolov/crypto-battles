@@ -11,6 +11,10 @@
     margin: 0 0 10px !important;
 }
 
+.mat-tooltip {
+    white-space: pre-line;
+}
+
 
 /* Helpers */
 

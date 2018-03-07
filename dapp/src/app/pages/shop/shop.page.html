@@ -1,0 +1,18 @@
+<ul class="list-group" *ngIf="isLoaded">
+    <ng-template ngFor let-item [ngForOf]="items" let-i="index">
+        <li class="d-flex pos-r border-bottom" *ngIf="item">
+            <img src="./assets/images/items/{{item.type.toLowerCase()}}.gif" alt="{{item.type}}" class="item-thumb">
+
+            <ul class="list-group mt-2 item-stats">
+                <li class="mb-1"><small class="text-uppercase font-weight-bold">{{item.type}}</small></li>
+                <li *ngIf="item.damage > 0">Damage: <span class="text-secondary">{{item.damage | number}}</span></li>
+                <li *ngIf="item.health > 0">Health: <span class="text-secondary">{{item.health | number}}</span></li>
+                <li *ngIf="item.regeneration > 0">Regeneration: <span class="text-secondary">{{item.regeneration | number}}</span></li>
+            </ul>
+
+            <span class="item-price border border-bottom-0 rounded-top"><small class="text-uppercase">Gold: </small>{{item.price | number}}</span>
+
+            <button class="btn btn-primary btn-sm buy-item" [disabled]="player.gold < item.price || purchasesInProgress[i]" (click)="buyItem(i)">Buy</button>
+        </li>
+    </ng-template>
+</ul>

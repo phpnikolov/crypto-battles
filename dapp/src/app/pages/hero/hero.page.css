@@ -23,3 +23,18 @@
     padding: 5px;
     border-radius: 5px;
 }
+
+.hero-items {
+    /* 77*4 */
+    width: 308px;
+}
+
+.hero-item {
+    display: block;
+    float: left;
+    width: 67px;
+    height: 67px;
+    padding: 11px;
+    margin: 5px;
+    border-radius: 5px;
+}

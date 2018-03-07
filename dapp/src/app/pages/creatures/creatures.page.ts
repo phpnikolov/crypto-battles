@@ -14,6 +14,34 @@ export class CreaturesPage implements OnInit {
 
   public battlesInProgress: { [cretureIdx: number]: boolean } = {};
 
+  public readonly cCountList: { [value: string]: any } = {
+    1: {
+      label: 'Few',
+      min: 1,
+      max: 4
+    },
+    2: {
+      label: 'Several',
+      min: 5,
+      max: 9
+    },
+    3: {
+      label: 'Pack',
+      min: 10,
+      max: 19
+    },
+    4: {
+      label: 'Lots',
+      min: 20,
+      max: 49
+    },
+    5: {
+      label: 'Horde',
+      min: 50,
+      max: 99
+    },
+  }
+
   constructor(
     private dialogService: DialogService,
     private contract: ContractService,
@@ -30,11 +58,11 @@ export class CreaturesPage implements OnInit {
 
   public attack(creatureIdx: number) {
     this.battlesInProgress[creatureIdx] = true;
-    this.contract.attackCreature(creatureIdx)
+    this.contract.fight(creatureIdx)
       .then((tx: Transaction) => {
         tx.onChange = (tx: Transaction) => {
           if (tx.status === 'confirmed') {
-            this.player.load();
+            this.player.loadPlayer();
             this.creaturesService.load();
             this.battlesInProgress[creatureIdx] = false;
           }
@@ -50,5 +78,19 @@ export class CreaturesPage implements OnInit {
         this.dialogService.addError(err);
       });
   }
+
+  get creatures() {
+    return this.creaturesService.creatures;
+  }
+
+
+  get battles() {
+    return this.creaturesService.battles;
+  }
+
+  get pastBattles() {
+    return this.creaturesService.pastBattles;
+  }
+
 
 }

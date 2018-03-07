@@ -37,7 +37,7 @@ export class ContractService {
           let tx: Transaction = {
             label: 'Registration',
             to: this.env.contract.address,
-            gasLimit: Math.ceil(gasAmount * 1.1),
+            gasLimit: Math.ceil(gasAmount * 1.5), // 50% more gas than expected
             data: method.encodeABI()
           };
 
@@ -51,14 +51,14 @@ export class ContractService {
 
   public getPlayer(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getPlayer().call({ from: this.wallet.getAddress() })
+      this.contract.methods.players(this.wallet.getAddress()).call()
         .then(resolve).catch(reject);
     });
   }
 
-  public getCreatures(): Promise<any> {
+  public getInfo(): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.contract.methods.getCreatures().call({ from: this.wallet.getAddress() })
+      this.contract.methods.getInfo().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
     });
   }
@@ -70,16 +70,23 @@ export class ContractService {
     });
   }
 
-  public attackCreature(cureatureIdx: number): Promise<Transaction> {
+  public getPastBattles(): Promise<any> {
     return new Promise((resolve, reject) => {
-      let method = this.contract.methods.attackCreature(cureatureIdx);
+      this.contract.methods.getPastBattles().call({ from: this.wallet.getAddress() })
+        .then(resolve).catch(reject);
+    });
+  }
+
+  public fight(battleId: number): Promise<Transaction> {
+    return new Promise((resolve, reject) => {
+      let method = this.contract.methods.fight(battleId);
 
       method.estimateGas({ from: this.wallet.getAddress() })
         .then((gasAmount: number) => {
           let tx: Transaction = {
-            label: 'Attack creature #' + (cureatureIdx + 1),
+            label: 'Attack creature #' + (battleId + 1),
             to: this.env.contract.address,
-            gasLimit: Math.ceil(gasAmount * 1.1),
+            gasLimit: Math.ceil(gasAmount * 1.5),
             data: method.encodeABI()
           };
 
@@ -90,16 +97,39 @@ export class ContractService {
     });
   }
 
+
   public setPoints(damage: number, health: number, spirit: number): Promise<Transaction> {
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.setPoints(damage, health, spirit);
 
+      let tx: Transaction = {
+        label: 'Set points',
+        to: this.env.contract.address,
+        gasLimit: 70000,
+        data: method.encodeABI()
+      };
+
+      this.wallet.sendTransaction(tx).then(resolve).catch(reject);
+    });
+  }
+
+  public shop(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.contract.methods.shop().call({ from: this.wallet.getAddress() })
+        .then(resolve).catch(reject);
+    });
+  }
+
+  public buyItem(itemId: number, round: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let method = this.contract.methods.buyItem(itemId, round);
+
       method.estimateGas({ from: this.wallet.getAddress() })
         .then((gasAmount: number) => {
           let tx: Transaction = {
-            label: 'Set points',
+            label: 'Buy item #' + (itemId + 1),
             to: this.env.contract.address,
-            gasLimit: Math.ceil(gasAmount * 1.1),
+            gasLimit: Math.ceil(gasAmount * 1.5),
             data: method.encodeABI()
           };
 
@@ -107,6 +137,13 @@ export class ContractService {
 
         })
         .catch(reject);
+    });
+  }
+
+  public getItems(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.contract.methods.getItems().call({ from: this.wallet.getAddress() })
+        .then(resolve).catch(reject);
     });
   }
 }

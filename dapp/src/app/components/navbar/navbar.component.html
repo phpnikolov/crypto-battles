@@ -1,10 +1,10 @@
-<div class="mb-3 bg-white border-bottom box-shadow">
+<div class="bg-white border-bottom box-shadow">
     <div class="container">
         <div class="d-flex flex-column flex-md-row align-items-center">
 
             <div class="mr-md-auto">
                 <ng-template [ngIf]="player.isLoaded">
-                    <span class="mx-2 cur-help" title="{{(player.blockNumber % 1000) / 10}}% of the time has passed"><small class="text-uppercase">Day:</small> {{player.day | number}}</span>
+                    <span class="mx-2 cur-help" title="The round is changed every 500 blocks (~2h)"><small class="text-uppercase">Round:</small> {{player.round | number}}</span>
                     <span class="mx-2"><small class="text-uppercase">Gold:</small> {{player.gold | number:'1.0-4'}}</span>
                 </ng-template>
             </div>

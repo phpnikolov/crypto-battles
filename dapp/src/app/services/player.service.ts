@@ -3,29 +3,60 @@ import * as Utils from 'web3-utils';
 import { WalletService } from './wallet.service';
 import { ContractService } from './contract.service';
 import { DialogService } from './dialog.service';
+import { ZipperService } from './zipper.service';
+import { Item } from '../interfaces/item';
+import { ItemService } from './item.service';
 
 @Injectable()
 export class PlayerService {
 
-    private playerData: { [key: string]: any };
+    private _player: { [key: string]: any };
+    private _info: { [key: string]: any };
+
+    private _items: Item[] = [];
 
     public constructor(
         private wallet: WalletService,
         private contract: ContractService,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private zipper: ZipperService,
+        private itemService: ItemService
     ) {
 
     }
 
+    public loadItems() {
+        this.contract.getItems()
+            .then((data: string[]) => {
+                for (let i = 0; i < data.length; i++) {
+                    const itemZip = data[i];
 
-    public load() {
+                    this._items[i] = this.itemService.unzipItem(itemZip);
+                }
+            })
+            .catch(err => {
+                this.dialogService.addError("Can't connect to Provider");
+                console.error(err);
+            })
+    }
+
+
+    public loadPlayer() {
         if (!this.wallet.isUnlocked) {
             //return;
         }
 
         this.contract.getPlayer()
-            .then((contractData) => {
-                this.playerData = contractData;
+            .then((data) => {
+                this._player = data;
+            })
+            .catch(err => {
+                this.dialogService.addError("Can't connect to Provider");
+            });
+
+        this.contract.getInfo()
+            .then((data) => {
+                this._info = data;
             })
             .catch(err => {
                 this.dialogService.addError("Can't connect to Provider");
@@ -33,7 +64,7 @@ export class PlayerService {
     }
 
     get isLoaded(): boolean {
-        return (typeof this.playerData !== 'undefined');
+        return (typeof this._player !== 'undefined' && typeof this._info !== 'undefined');
     }
 
     public getLevelSize(lvl: number): number {
@@ -45,15 +76,15 @@ export class PlayerService {
     }
 
     get username(): string {
-        return Utils.hexToString(this.playerData['_username']);
+        return Utils.hexToString(this._player['username']);
     }
 
     get gold(): number {
-        return parseInt(this.playerData['_gold']);
+        return parseInt(this._player['gold']);
     }
 
     get totalExperience(): number {
-        return parseInt(this.playerData['_experience']);
+        return parseInt(this._player['experience']);
     }
 
     get experience(): number {
@@ -65,52 +96,46 @@ export class PlayerService {
     }
 
 
+    get level(): number {
+        return parseInt(this._player['level']);
+    }
 
     get health(): number {
-        return parseInt(this.playerData['_health']);
+        return parseInt(this._player['health']);
     }
 
-    get level(): number {
-        return parseInt(this.playerData['_level']);
+    get lastSynced(): number {
+        return parseInt(this._player['lastSynced']);
     }
 
-    get maxHealth(): number {
-        return parseInt(this.playerData['_maxHealth']);
-    }
-
-    get day(): number {
-        return parseInt(this.playerData['_day']);
-    }
-
-    get blockNumber(): number {
-        return parseInt(this.playerData['_blockNumber']);
+    get currentHealth(): number {
+        return this._info['_currentHealth'];
     }
 
     get damage(): number {
-        return parseInt(this.playerData['_damage']);
+        return parseInt(this._player['damage']);
     }
 
     get regeneration(): number {
-        return parseInt(this.playerData['_healthPer100Blocks']) / 100;
+        return parseInt(this._player['regeneration']) / 10;
     }
 
-    get points(): { damage: number, health: number, regeneration: number } {
-        return {
-            damage: parseInt(this.playerData['_damagePoints']),
-            health: parseInt(this.playerData['_healthPoints']),
-            regeneration: parseInt(this.playerData['_regenerationPoints'])
-        }
-    }
-
-    get maxPoints() : number {
-        return (this.level - 1) * 5 - (this.points.damage + this.points.health + this.points.regeneration);
+    get points(): number {
+        return parseInt(this._player['points']);
     }
 
     get deadOn(): number {
-        return parseInt(this.playerData['_deadOn']);
+        return parseInt(this._player['deadOn']);
     }
 
-    get isDead():boolean {
-        return this.deadOn == this.day;
+    get isDead(): boolean {
+        return this._info['_isDead'];
+    }
+    get round(): number {
+        return this._info['_round'];
+    }
+
+    get items(): Item[] {
+        return this._items;
     }
 }

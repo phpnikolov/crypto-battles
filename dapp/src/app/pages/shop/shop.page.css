@@ -1,0 +1,26 @@
+.buy-item {
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.item-stats {
+    list-style: none;
+    padding: 0;
+    line-height: 1.3em;
+}
+
+.item-thumb {
+    width: 45px;
+    height: 45px;
+    margin: 30px 30px;
+}
+
+.item-price {
+    display: block;
+    padding: 1px 5px;
+    position: absolute;
+    bottom: 0;
+    left: 105px;
+}

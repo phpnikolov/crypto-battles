@@ -167,55 +167,70 @@ contract CryptoCreatures {
         
         if (_level <= 5) {
             /* Level 1-5
-             * Halfling - Several (25%)
-             * Rogue - Several (25%)
-             * Pikeman - Few (25%)
-             * Nomad - Few (25%)
+             * Halfling - Several (20%)  - easy
+             * Rogue - Several (20%) - easy
+             * Nomad - Few (20%) - easy
+             * Halfling - Pack (15%) - normal
+             * Pikeman - Several (15%) - normal
+             * Nomad - Several (10%) - hard
              */
-            if (rand < 25) {
+            if (rand < 20) {
                 _cType = CreatureType.Halfling;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 50) {
+            else if (rand < 40) {
                 _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 75) {
-                _cType = CreatureType.Pikeman;
+            else if (rand < 60) {
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Few;
+            }
+            else if (rand < 75) {
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Pack;
+            }
+            else if (rand < 60) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Several;
             }
             else {
                 _cType = CreatureType.Nomad;
-                _cCount = CreatureCount.Few;
+                _cCount = CreatureCount.Several;
             }
         }
         else if (_level <= 10) {
             /* Level 5-10
-             * Halfling - Pack (20%)
-             * Rogue - Pack (20%)
-             * Pikeman - Pack (20%)
-             * Nomad - Several (20%)
-             * Swordman - Few (20%)
+             * Halfling - Pack (20%) - easy
+             * Pikeman - Several (20%) - easy
+             * Rogue - Pack (20%) - normal
+             * Nomad - Several (20%) - normal
+             * Swordman - Several (10%) - hard
+             * Pikeman - Pack (10%) - hard
              */
             if (rand < 20) {
                 _cType = CreatureType.Halfling;
                 _cCount = CreatureCount.Pack;
             }
             else if (rand < 40) {
-                _cType = CreatureType.Rogue;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Several;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Pikeman;
+                _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Pack;
             }
             else if (rand < 80) {
                 _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Several;
             }
-             else {
+            else if (rand < 90) {
                 _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Few;
+                _cCount = CreatureCount.Several;
+            }
+            else {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Pack;
             }
         }
     }
@@ -225,7 +240,8 @@ contract CryptoCreatures {
 contract CryptoItems {
     enum ItemType {
         unknown,
-        Weapon,
+        Mace,
+        Sword,
         Helm,
         Chain,
         Ring
@@ -240,14 +256,18 @@ contract CryptoItems {
     
     function generateItem(uint8 _level, uint _random) internal pure returns(Item _item) {
         
-        _item.iType = ItemType(1 + (_random % 4));
+        _item.iType = ItemType(1 + (_random % 5));
         
         uint16 maxDamagePerLvl = 0;
         uint16 maxHealthPerLvl = 0;
         uint16 maxRegenerationPerLvl = 0;
         
-        if (_item.iType == ItemType.Weapon) {
+        if (_item.iType == ItemType.Mace) {
             maxDamagePerLvl = 4;
+        }
+         if (_item.iType == ItemType.Sword) {
+            maxDamagePerLvl = 3;
+            maxHealthPerLvl = 10;
         }
         else if (_item.iType == ItemType.Helm) {
             maxHealthPerLvl = 15;
@@ -304,10 +324,10 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     mapping (address => uint[8]) private items;
     
     // flag to disable item from the shop, after purchased (itemId => round)
-    mapping (address => uint[5]) private purchasedOn;
+    mapping (address => uint[6]) private purchasedOn;
     
     // player past battles (creature id => zipUint24) - round, cType, units
-    mapping (address => uint[5]) private pastBattles;
+    mapping (address => uint[6]) private pastBattles;
     
     modifier isPlayer() {
         require(isRegistered(msg.sender) == true);
@@ -326,7 +346,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             registrationBlock: block.number,
             lastSynced: block.number,
             level: 1,
-            gold: 1000,
+            gold: 2000,
             experience: 0,
             
             points: 0,
@@ -416,7 +436,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
     
     // (creature id => zipUint24) - round, cType, units
-    function getPastBattles() isPlayer public view returns(uint[5] ) {
+    function getPastBattles() isPlayer public view returns(uint[6] ) {
         return pastBattles[msg.sender];
     }
     
@@ -442,7 +462,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         CreatureType _cType3,
         CreatureCount _cCount3,
         CreatureType _cType4,
-        CreatureCount _cCount4
+        CreatureCount _cCount4,
+        CreatureType _cType5,
+        CreatureCount _cCount5
     ){
         uint round = getRound(msg.sender);
 
@@ -451,14 +473,15 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         (_cType2, _cCount2) = getBattle(msg.sender, round, 2);
         (_cType3, _cCount3) = getBattle(msg.sender, round, 3);
         (_cType4, _cCount4) = getBattle(msg.sender, round, 4);
+        (_cType5, _cCount5) = getBattle(msg.sender, round, 5);
     }
     
     
     function fight(uint8 _battleId) isPlayer public {
         require(!isDead(msg.sender));
         
-        // acepted battles 0-4
-        require(_battleId < 5);
+        // acepted battles 0-5
+        require(_battleId < 6);
         
         uint round = getRound(msg.sender);
         
@@ -531,11 +554,14 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
     
     
-    function getItem(address _addr, uint _round, uint8 _itemId) private view returns(Item){
+    function getItem(address _addr, uint _round, uint8 _itemId) private view returns(Item) {
+        // next generation item every 5 lvls
+        uint8 level = 5 + ((players[_addr].level / 5) * 5);
+        
         // this random will change every 100 blocks or level change
-        uint staticRand = uint256(keccak256(_itemId, _round, _addr));
+        uint staticRand = uint256(keccak256(_itemId, _round, _addr, level));
     
-        return generateItem(players[_addr].level + 2, staticRand);
+        return generateItem(level, staticRand);
     }
     
     function getItemPrice(Item _item) private pure returns(uint24) {
@@ -546,7 +572,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
     
     // zip order - type, damage, health, regeneration, price
-    function shop() isPlayer public view returns(uint[5]) {
+    function shop() isPlayer public view returns(uint[6]) {
         uint round = getRound(msg.sender);
 
         Item memory item;
@@ -556,6 +582,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         uint zip2;
         uint zip3;
         uint zip4;
+        uint zip5;
         
         // check if this item is already purchased
         if (purchasedOn[msg.sender][0] != round) {
@@ -582,13 +609,18 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             item =  getItem(msg.sender, round, 4);
             zip4 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
         }
+        
+        if (purchasedOn[msg.sender][5] != round) {
+            item =  getItem(msg.sender, round, 5);
+            zip5 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
+        }
 
         
-        return [zip0, zip1, zip2, zip3, zip4];
+        return [zip0, zip1, zip2, zip3, zip4, zip5];
     }
     
    function buyItem(uint8 _itemId, uint _round) isPlayer public {
-        require(_itemId < 5);
+        require(_itemId < 6);
         
         uint round = getRound(msg.sender);
         

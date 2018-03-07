@@ -11,17 +11,12 @@ export const environment = {
     abi: [
       {
         "constant": true,
-        "inputs": [
-          {
-            "name": "_addr",
-            "type": "address"
-          }
-        ],
-        "name": "isRegistered",
+        "inputs": [],
+        "name": "shop",
         "outputs": [
           {
             "name": "",
-            "type": "bool"
+            "type": "uint256[6]"
           }
         ],
         "payable": false,
@@ -30,63 +25,91 @@ export const environment = {
       },
       {
         "constant": true,
-        "inputs": [],
-        "name": "getPlayer",
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint8"
+          }
+        ],
+        "name": "creatures",
         "outputs": [
           {
-            "name": "_username",
+            "name": "damage",
+            "type": "uint16"
+          },
+          {
+            "name": "health",
+            "type": "uint16"
+          },
+          {
+            "name": "gold",
+            "type": "uint24"
+          },
+          {
+            "name": "experience",
+            "type": "uint24"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "players",
+        "outputs": [
+          {
+            "name": "username",
             "type": "bytes12"
           },
           {
-            "name": "_level",
+            "name": "registrationBlock",
             "type": "uint256"
           },
           {
-            "name": "_day",
+            "name": "lastSynced",
             "type": "uint256"
           },
           {
-            "name": "_gold",
+            "name": "level",
+            "type": "uint8"
+          },
+          {
+            "name": "gold",
             "type": "uint256"
           },
           {
-            "name": "_experience",
+            "name": "experience",
             "type": "uint256"
           },
           {
-            "name": "_maxHealth",
+            "name": "points",
             "type": "uint256"
           },
           {
-            "name": "_damage",
+            "name": "currentHealth",
             "type": "uint256"
           },
           {
-            "name": "_healthPer100Blocks",
+            "name": "damage",
             "type": "uint256"
           },
           {
-            "name": "_health",
+            "name": "health",
             "type": "uint256"
           },
           {
-            "name": "_damagePoints",
+            "name": "regeneration",
             "type": "uint256"
           },
           {
-            "name": "_healthPoints",
-            "type": "uint256"
-          },
-          {
-            "name": "_regenerationPoints",
-            "type": "uint256"
-          },
-          {
-            "name": "_deadOn",
-            "type": "uint256"
-          },
-          {
-            "name": "_blockNumber",
+            "name": "deadOn",
             "type": "uint256"
           }
         ],
@@ -97,7 +120,7 @@ export const environment = {
       {
         "constant": true,
         "inputs": [],
-        "name": "getCreatures",
+        "name": "getBattles",
         "outputs": [
           {
             "name": "_cType0",
@@ -138,6 +161,33 @@ export const environment = {
           {
             "name": "_cCount4",
             "type": "uint8"
+          },
+          {
+            "name": "_cType5",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount5",
+            "type": "uint8"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "isRegistered",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -147,47 +197,51 @@ export const environment = {
       {
         "constant": true,
         "inputs": [],
-        "name": "getBattles",
+        "name": "getInfo",
         "outputs": [
           {
-            "name": "_cType0",
-            "type": "uint8"
-          },
-          {
-            "name": "_uinits0",
+            "name": "_round",
             "type": "uint256"
           },
           {
-            "name": "_cType1",
-            "type": "uint8"
-          },
-          {
-            "name": "_uinits1",
+            "name": "_blockNumber",
             "type": "uint256"
           },
           {
-            "name": "_cType2",
-            "type": "uint8"
-          },
-          {
-            "name": "_uinits2",
+            "name": "_currentHealth",
             "type": "uint256"
           },
           {
-            "name": "_cType3",
-            "type": "uint8"
-          },
+            "name": "_isDead",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getItems",
+        "outputs": [
           {
-            "name": "_uinits3",
-            "type": "uint256"
-          },
+            "name": "",
+            "type": "uint256[8]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getPastBattles",
+        "outputs": [
           {
-            "name": "_cType4",
-            "type": "uint8"
-          },
-          {
-            "name": "_uinits4",
-            "type": "uint256"
+            "name": "",
+            "type": "uint256[6]"
           }
         ],
         "payable": false,
@@ -198,11 +252,15 @@ export const environment = {
         "constant": false,
         "inputs": [
           {
-            "name": "_creatureIdx",
+            "name": "_itemId",
             "type": "uint8"
+          },
+          {
+            "name": "_round",
+            "type": "uint256"
           }
         ],
-        "name": "attackCreature",
+        "name": "buyItem",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -217,6 +275,29 @@ export const environment = {
           }
         ],
         "name": "register",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_battleId",
+            "type": "uint8"
+          }
+        ],
+        "name": "fight",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "kill",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -243,12 +324,6 @@ export const environment = {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
-      },
-      {
-        "inputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
       }
     ]
   }

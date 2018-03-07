@@ -2,109 +2,74 @@ import { Injectable } from '@angular/core';
 import { WalletService } from './wallet.service';
 import { ContractService } from './contract.service';
 import { DialogService } from './dialog.service';
+import { Creature } from '../interfaces/creature';
+import { forEach } from '@angular/router/src/utils/collection';
+import { ZipperService } from './zipper.service';
 
 @Injectable()
 export class CreaturesService {
 
 
-  private readonly creaturesValuelist: { [cType: number]: Creature } = {
+  private creaturesCount = 7;
+  public creatures: { [cType: number]: Creature } = {
     1: {
-      name: 'Halfling',
-      imageUrl: './assets/images/creatures/halfling.png',
+      name: "Halfling",
       damage: 3,
       health: 5,
-      gold: 16,
-      experience: 40
+      gold: 16, 
+      experience: 40 
     },
     2: {
-      name: 'Rogue',
-      imageUrl: './assets/images/creatures/rogue.png',
+      name: "Rogue",
       damage: 7,
       health: 5,
-      gold: 36,
-      experience: 40
+      gold: 36, 
+      experience: 40 
     },
     3: {
-      name: 'Pikeman',
-      imageUrl: './assets/images/creatures/pikeman.png',
+      name: "Pikeman",
       damage: 7,
       health: 9,
-      gold: 32,
-      experience: 60
+      gold: 32, 
+      experience: 60 
     },
     4: {
-      name: 'Nomad',
-      imageUrl: './assets/images/creatures/nomad.png',
+      name: "Nomad",
       damage: 8,
       health: 16,
-      gold: 32,
-      experience: 180
+      gold: 32, 
+      experience: 180 
     },
     5: {
-      name: 'Swordman',
-      imageUrl: './assets/images/creatures/swordman.png',
+      name: "Swordman",
       damage: 15,
       health: 21,
-      gold: 72,
-      experience: 180
+      gold: 72, 
+      experience: 180 
     },
     6: {
-      name: 'Cavalier',
-      imageUrl: './assets/images/creatures/cavalier.png',
+      name: "Nomad",
       damage: 20,
       health: 40,
-      gold: 80,
-      experience: 450
+      gold: 80, 
+      experience: 450 
     }
   };
 
-  private readonly countValuelist: { [value: number]: any } = {
-    0: {
-      label: 'Unknown',
-      min: 0,
-      max: 9999
-    },
-    1: {
-      label: 'Few',
-      min: 1,
-      max: 4
-    },
-    2: {
-      label: 'Several',
-      min: 5,
-      max: 9
-    },
-    3: {
-      label: 'Pack',
-      min: 10,
-      max: 19
-    },
-    4: {
-      label: 'Lots',
-      min: 20,
-      max: 49
-    },
-    5:  {
-      label: 'Horde',
-      min: 50,
-      max: 99
-    },
-  }
-
-
-  private _creatures: { data: Creature, count: string }[] = [];
-  private _battles: { data: Creature, units: number | undefined}[] = [];
+  private _battles: { cType: number, cCount: number }[] = [];
+  private _pastBattles: { round: number, cType: number, units: number | undefined }[] = [];
 
   public constructor(
     private wallet: WalletService,
     private contract: ContractService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private zipper: ZipperService
   ) {
 
   }
 
   get isLoaded(): boolean {
-    return (this._creatures.length > 0);
+    return (this.battles.length > 0 && this.pastBattles.length > 0);
   }
 
   public load() {
@@ -112,37 +77,35 @@ export class CreaturesService {
       //return;
     }
 
-    this.contract.getCreatures()
-      .then((creaturesData) => {
-        for (let i = 0; i < 5; i++) {
-          const cType = creaturesData['_cType' + i];
-          const cCount = creaturesData['_cCount' + i];
 
-          this._creatures[i] = {
-            data: this.creaturesValuelist[cType],
-            count: this.countValuelist[cCount]
-          };
-        }
-      })
-      .catch(err => {
-        this.dialogService.addError("Can't connect to Provider");
-      });
 
-      this.contract.getBattles()
-      .then((creaturesData) => {
-        for (let i = 0; i < 5; i++) {
-          const cType = creaturesData['_cType' + i];
-
-          if (cType == 0){
-            // there is no battle today
-            this._battles[i] = undefined;
-            continue;
-          }
-
+    this.contract.getBattles()
+      .then((battles) => {
+        for (let i = 0; i < 6; i++) {
           this._battles[i] = {
-            data: this.creaturesValuelist[cType],
-            units: creaturesData['_uinits' + i]
+            cType: parseInt(battles['_cType' + i]),
+            cCount: battles['_cCount' + i]
           };
+        }
+      })
+      .catch(err => {
+        this.dialogService.addError("Can't connect to Provider");
+      });
+
+    this.contract.getPastBattles()
+      .then((data) => {
+
+        for (let i = 0; i < data.length; i++) {
+          const zipCode = data[i];
+
+          let params: number[] = this.zipper.unzipUint24(zipCode);
+          this._pastBattles[i] = {
+            round: params[0],
+            cType: params[1],
+            units: params[2]
+          };
+
+
         }
       })
       .catch(err => {
@@ -150,23 +113,13 @@ export class CreaturesService {
       });
   }
 
-  get creatures() {
-    return this._creatures;
-  }
 
   get battles() {
     return this._battles;
   }
 
-}
+  get pastBattles() {
+    return this._pastBattles;
+  }
 
-
-
-export interface Creature {
-  name: string,
-  imageUrl: string,
-  damage: number,
-  health: number,
-  gold: number,
-  experience: number
 }

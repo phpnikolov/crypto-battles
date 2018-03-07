@@ -45,10 +45,12 @@ export class GamePage {
 
 
   private init() {
-    this.player.load();
+    this.player.loadItems();
+    this.player.loadPlayer();
+
     setInterval(() => {
-      this.player.load();
-    }, 7500); // read the player every 7.5 sec
+      this.player.loadPlayer();
+    }, 10000); // read the player every 10 sec
   }
 
   private register() {

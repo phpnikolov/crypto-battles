@@ -19,29 +19,29 @@ export class PointsDialog {
     public dialogRef: MatDialogRef<PointsDialog>,
     private dialogService: DialogService,
     private contract: ContractService,
-    private player: PlayerService,
+    public player: PlayerService,
     private fb: FormBuilder,
   ) {
 
     this.fg = fb.group({
-      damagePoints: [player.points.damage],
-      healthPoints: [player.points.health],
-      regenerationPoints: [player.points.regeneration]
+      damagePoints: [0],
+      healthPoints: [0],
+      regenerationPoints: [0]
     });
   }
 
   get maxPoints(): number {
-    let damagePoints = this.damagePoints - this.player.points.damage;
-    let healthPoints = this.healthPoints - this.player.points.health;
-    let regenerationPoints = this.regenerationPoints - this.player.points.regeneration;
+    let damagePoints = this.damagePoints;
+    let healthPoints = this.healthPoints;
+    let regenerationPoints = this.regenerationPoints;
 
-    return this.player.maxPoints - (damagePoints + healthPoints + regenerationPoints);
+    return this.player.points - (damagePoints + healthPoints + regenerationPoints);
   }
 
 
-  get damagePoints():number { return parseInt(this.fg.get('damagePoints').value); }
-  get healthPoints():number { return parseInt(this.fg.get('healthPoints').value); }
-  get regenerationPoints():number { return parseInt(this.fg.get('regenerationPoints').value); }
+  get damagePoints():number { return parseInt(this.fg.get('damagePoints').value) || 0; }
+  get healthPoints():number { return parseInt(this.fg.get('healthPoints').value) || 0; }
+  get regenerationPoints():number { return parseInt(this.fg.get('regenerationPoints').value) || 0; }
 
   public save() {
 
@@ -50,7 +50,7 @@ export class PointsDialog {
       // go to the game when transaction is confirmed
       tx.onChange = (tx: Transaction) => {
         if (tx.status === 'confirmed') {
-          this.player.load();
+          this.player.loadPlayer();
         }
       }
 

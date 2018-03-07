@@ -1,17 +1,24 @@
 <app-navbar *ngIf="wallet.address"></app-navbar>
-<div class="container" *ngIf="player.isLoaded">
+<div class="container mt-4" *ngIf="player.isLoaded">
     <div class="row">
-        <div class="col-sm mb-4">
+        <div class="col-xl mb-4">
             <h3>Hero</h3>
-            <app-hero></app-hero>
+            <div class="p-3">
+                <app-hero></app-hero>
+            </div>
+
         </div>
-        <div class="col-sm mb-4">
-            <h3>Daily creatures</h3>
-            <app-creatures></app-creatures>
+        <div class="col-xl mb-4">
+            <h3>Creatures</h3>
+            <div class="p-3">
+                <app-creatures></app-creatures>
+            </div>
         </div>
-        <div class="col-sm mb-4">
+        <div class="col-xl mb-4">
             <h3>Shop</h3>
-            <app-shop></app-shop>
+            <div class="p-3">
+                <app-shop></app-shop>
+            </div>
         </div>
     </div>
 </div>

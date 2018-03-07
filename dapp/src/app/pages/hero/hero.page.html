@@ -1,15 +1,15 @@
-<h5 class="text-danger text-center" *ngIf="player.isDead">You are dead until day {{player.day + 1}}</h5>
+<h5 class="text-danger text-center" *ngIf="player.isDead">You are dead until next round</h5>
 <img src="https://robohash.org/{{player.address}}?set=set2" alt="{{player.username}} avatar" class="m-auto d-block" [ngClass]="{'opacity-50': player.isDead}">
 <h4 class="text-center border-top border-secondary m-0 pt-1 pb-2">
     {{player.username}}
-    <i [ngClass]="{'text-success' : player.maxPoints > 0}" class="fa fa-plus-circle cur-pointer font-size-08" (click)="showPointsDialog()" title="You have {{player.maxPoints}} points"></i>
+    <i *ngIf="player.points > 0" class="fa fa-plus-circle cur-pointer font-size-08 text-success" (click)="showPointsDialog()" matTooltip="You have {{player.points}} points"></i>
 </h4>
 <div class="pos-r">
-    <div id="lvl" class="bg-warning rounded-circle border border-secondary" title="Level">{{player.level}}</div>
-    <div class="progress ml-4 border border-secondary" title="{{player.experience}} / {{player.nextLevelExperience}}">
+    <div id="lvl" class="bg-warning rounded-circle border border-secondary" matTooltip="Level">{{player.level}}</div>
+    <div class="progress ml-4 border border-secondary" matTooltip="{{player.experience}} / {{player.nextLevelExperience}}">
         <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" [ngStyle]="{'width': (player.experience / player.nextLevelExperience * 100) + '%'}"></div>
     </div>
-    <table width="100%" class="mt-4" style="line-height: 1.2em">
+    <table width="100%" class="mt-5" style="line-height: 1.2em">
         <tr>
             <td width="53">
                 <i class="fa fa-gavel icon"></i>
@@ -18,15 +18,21 @@
                 <b>Damage</b> <br>
                 <span class="text-secondary">{{player.damage | number}}</span>
             </td>
-            <td class="text-right cur-help" title="Regenerate {{player.regeneration}} health per block">
+            <td class="text-right cur-help" matTooltip="Regenerate {{player.regeneration}} health per block">
                 <b>Health</b><br>
                 <span class="text-secondary">
-                    <span [ngClass]="{'text-danger' : player.health / player.maxHealth < 0.3}">{{player.health | number}}</span> / {{player.maxHealth | number}}
+                    <span [ngClass]="{'text-danger' : player.currentHealth / player.health < 0.3}">{{player.currentHealth | number}}</span> / {{player.health | number}}
                 </span>
             </td>
-            <td width="53" class="text-right cur-help" title="Regenerate {{player.regeneration}} health per block">
+            <td width="53" class="text-right cur-help">
                 <i class="fa fa-heart icon"></i>
             </td>
         </tr>
     </table>
+</div>
+<div class="hero-items mt-4 mx-auto clearfix">
+    <div class="hero-item border" *ngFor="let item of player.items" matTooltipPosition="above" matTooltip="{{item ? getItemTooltip(item) : 'Empty item slot'}}">
+        <img *ngIf="item" src="./assets/images/items/{{item.type.toLowerCase()}}.gif" alt="{{item.type}}">
+    </div>
+
 </div>

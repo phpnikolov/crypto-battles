@@ -15,6 +15,8 @@ import {
   MatButtonModule,
   MatFormFieldModule,
   MatInputModule,
+  MatTooltipModule,
+  
 } from '@angular/material';
 
 // components
@@ -27,6 +29,8 @@ import { ContractService } from './services/contract.service';
 import { WalletService } from './services/wallet.service';
 import { PlayerService } from './services/player.service';
 import { CreaturesService } from './services/creatures.service';
+import { ItemService } from './services/item.service';
+import { ZipperService } from './services/zipper.service';
 
 // Pages
 import { LoginPage } from './pages/login/login.page';
@@ -44,8 +48,6 @@ import { PromptDialog } from './dialogs/prompt/prompt.dialog';
 import { NotEnoughBalanceDialog } from './dialogs/not-enough-balance/not-enough-balance.dialog';
 import { WalletDialog } from './dialogs/wallet/wallet.dialog';
 import { PointsDialog } from './dialogs/points/points.dialog';
-
-
 
 
 
@@ -109,7 +111,8 @@ StorageService.namespace = 'crypto-battles';
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule
   ],
   providers: [
     StorageService,
@@ -117,7 +120,9 @@ StorageService.namespace = 'crypto-battles';
     WalletService,
     PlayerService,
     CreaturesService,
-    DialogService
+    DialogService,
+    ItemService,
+    ZipperService
   ],
   entryComponents: [
     PromptDialog,
@@ -125,6 +130,7 @@ StorageService.namespace = 'crypto-battles';
     WalletDialog,
     PointsDialog
   ],
+
   bootstrap: [AppComponent, AlertsComponent]
 })
 export class AppModule { }
