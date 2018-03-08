@@ -14,45 +14,45 @@ export class CreaturesService {
   public creatures: { [cType: number]: Creature } = {
     1: {
       name: "Halfling",
-      damage: 3,
-      health: 5,
-      gold: 16, 
-      experience: 40 
+      damage: 2,
+      health: 11,
+      gold: 20, 
+      experience: 55 
     },
     2: {
       name: "Rogue",
-      damage: 7,
-      health: 5,
-      gold: 36, 
-      experience: 40 
+      damage: 4,
+      health: 11,
+      gold: 40, 
+      experience: 55 
     },
     3: {
       name: "Pikeman",
-      damage: 7,
-      health: 9,
-      gold: 32, 
-      experience: 60 
+      damage: 4,
+      health: 23,
+      gold: 40, 
+      experience: 115 
     },
     4: {
       name: "Nomad",
-      damage: 8,
-      health: 16,
-      gold: 32, 
-      experience: 180 
+      damage: 5,
+      health: 38,
+      gold: 50, 
+      experience: 190 
     },
     5: {
       name: "Swordman",
-      damage: 15,
-      health: 21,
-      gold: 72, 
-      experience: 180 
+      damage: 12,
+      health: 33,
+      gold: 120, 
+      experience: 165 
     },
     6: {
-      name: "Nomad",
-      damage: 20,
-      health: 40,
-      gold: 80, 
-      experience: 450 
+      name: "Cavalier",
+      damage: 10,
+      health: 77,
+      gold: 100, 
+      experience: 385 
     }
   };
 
