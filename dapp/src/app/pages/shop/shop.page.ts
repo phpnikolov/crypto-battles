@@ -28,7 +28,7 @@ export class ShopPage {
 
     this.load();
 
-    setTimeout(() => {
+    setInterval(() => {
       this.load();
     }, 10 * 1000);
   }
@@ -70,7 +70,7 @@ export class ShopPage {
             this.purchasesInProgress[itemId] = false;
           }
         }
-
+        tx.onChange(tx);
       })
       .catch((err) => {
         this.purchasesInProgress[itemId] = false;

@@ -68,7 +68,7 @@ export class PlayerService {
     }
 
     public getLevelSize(lvl: number): number {
-        return (40 * (lvl - 1) * (lvl + 8));
+        return (50 * (lvl - 1) * (lvl + 18));
     }
 
     get address(): string {

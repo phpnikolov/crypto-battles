@@ -21,6 +21,7 @@ import { BigInteger } from 'big-integer';
 import * as bigInt from 'big-integer';
 
 
+
 @Injectable()
 export class WalletService {
 
@@ -31,7 +32,7 @@ export class WalletService {
   private ks;
   private password;
   private transactions: Transaction[] = [];
-  public gasPrice: BigInteger = bigInt(Utils.toWei('5.1', 'Gwei'));
+  public gasPrice: BigInteger = bigInt(Utils.toWei(this.env.gasPrice, 'Gwei'));
 
   constructor(
     private storage: StorageService,
@@ -41,6 +42,30 @@ export class WalletService {
     this.eth = new Eth;
     this.eth.setProvider(this.env.provider);
     this.loadKs();
+
+    // monitor pending txs
+    let pendingTxs: Transaction[] = this.getPendingTransactions();
+    pendingTxs.forEach((tx: Transaction) => {
+      this.monitorTransaction(tx);
+    });
+  }
+
+  private monitorTransaction(tx: Transaction) {
+    this.eth.getTransactionReceipt(tx.txHash)
+      .then((receipt) => {
+        if (receipt && receipt.blockNumber) {
+          tx.status = 'confirmed';
+          tx.gasLimit = receipt.gasUsed;
+          this.storeTransactions();
+        }
+        else {
+          // retry after 2 sec
+          setTimeout(() => {
+            this.monitorTransaction(tx);
+          }, 2000);
+        }
+      })
+      .catch(console.error);
   }
 
   private loadKs() {
@@ -141,7 +166,7 @@ export class WalletService {
     return _.find(this.transactions, ['txHash', txHash]);
   }
 
-  
+
 
   /** 
    * Unlock private key with the user password
@@ -210,6 +235,10 @@ export class WalletService {
 
   public sendTransaction(tx: Transaction): Promise<Transaction> {
     return new Promise<Transaction>(async (resolve, reject) => {
+      if (this.getPendingTransactions().length > 0) {
+        reject("Please wait until previous transaction is over.");
+        return;
+      }
 
       let txAmount: BigInteger = bigInt(tx.value).plus(this.gasPrice.times(tx.gasLimit));
 
@@ -252,7 +281,7 @@ export class WalletService {
         data: tx.data
       });
 
-      
+
 
       this.getPrivateKey().then((privateKey: string) => {
         let bPrivateKey = new Buffer(privateKey, 'hex');
@@ -269,13 +298,19 @@ export class WalletService {
             resolve(tx);
             tx.onChange(tx);
           })
-          .on('error', (error) => {
+          .on('error', (error: Error) => {
             // transaction rejected
-            tx.status = 'error';
-            this.storeTransactions();
-            console.error(error);
-            reject(error);
-            tx.onChange(tx);
+            if (error.message.indexOf('within 50 blocks') > -1) {
+              // web3js stops watching transaction after 50 seconds and throw this error
+              // Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined!
+              this.monitorTransaction(tx);
+            }
+            else {
+              tx.status = 'error';
+              this.storeTransactions();
+              reject(error);
+              tx.onChange(tx);
+            }
           })
           .then((receipt) => {
             tx.status = 'confirmed';

@@ -33,6 +33,13 @@ export class DialogService {
     })
   }
 
+  public confirm(text:string) :Promise<string> {
+    /**
+     * @todo Implement this method
+     */
+    return this.prompt(text, {inputType: 'hidden'});
+  }
+
   public getAlerts(): Alert[] {
     let alerts: Alert[] = [];
 

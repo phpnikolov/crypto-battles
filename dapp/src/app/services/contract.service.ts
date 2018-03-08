@@ -123,20 +123,28 @@ export class ContractService {
   public buyItem(itemId: number, round: number): Promise<any> {
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.buyItem(itemId, round);
-
-      method.estimateGas({ from: this.wallet.getAddress() })
-        .then((gasAmount: number) => {
           let tx: Transaction = {
             label: 'Buy item #' + (itemId + 1),
             to: this.env.contract.address,
-            gasLimit: Math.ceil(gasAmount * 1.5),
+            gasLimit: 150000,
             data: method.encodeABI()
           };
 
           this.wallet.sendTransaction(tx).then(resolve).catch(reject);
+    });
+  }
 
-        })
-        .catch(reject);
+  public sellItem(slotId: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let method = this.contract.methods.sellItem(slotId);
+          let tx: Transaction = {
+            label: 'Sell item #' + (slotId + 1),
+            to: this.env.contract.address,
+            gasLimit: 150000,
+            data: method.encodeABI()
+          };
+
+          this.wallet.sendTransaction(tx).then(resolve).catch(reject);
     });
   }
 

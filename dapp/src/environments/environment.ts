@@ -6,8 +6,9 @@
 export const environment = {
   production: false,
   provider: 'https://ropsten.infura.io/rsndW2tOymHA1cBffVyN',
+  gasPrice: '11.1', // in Gwei
   contract: {
-    address: '0x41606e2becca8ef84c18873af24d5dfdbba9e8c4',
+    address: '0xacb076112d644562f0f8b35c303a32af6b6c4093',
     abi: [
       {
         "constant": true,
@@ -48,6 +49,64 @@ export const environment = {
           {
             "name": "experience",
             "type": "uint24"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getBattles",
+        "outputs": [
+          {
+            "name": "_cType0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType5",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount5",
+            "type": "uint8"
           }
         ],
         "payable": false,
@@ -120,55 +179,23 @@ export const environment = {
       {
         "constant": true,
         "inputs": [],
-        "name": "getBattles",
+        "name": "getInfo",
         "outputs": [
           {
-            "name": "_cType0",
-            "type": "uint8"
+            "name": "_round",
+            "type": "uint256"
           },
           {
-            "name": "_cCount0",
-            "type": "uint8"
+            "name": "_blockNumber",
+            "type": "uint256"
           },
           {
-            "name": "_cType1",
-            "type": "uint8"
+            "name": "_currentHealth",
+            "type": "uint256"
           },
           {
-            "name": "_cCount1",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType2",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount2",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType3",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount3",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType4",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount4",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType5",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount5",
-            "type": "uint8"
+            "name": "_isDead",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -187,32 +214,6 @@ export const environment = {
         "outputs": [
           {
             "name": "",
-            "type": "bool"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "getInfo",
-        "outputs": [
-          {
-            "name": "_round",
-            "type": "uint256"
-          },
-          {
-            "name": "_blockNumber",
-            "type": "uint256"
-          },
-          {
-            "name": "_currentHealth",
-            "type": "uint256"
-          },
-          {
-            "name": "_isDead",
             "type": "bool"
           }
         ],
@@ -270,11 +271,11 @@ export const environment = {
         "constant": false,
         "inputs": [
           {
-            "name": "_username",
-            "type": "bytes12"
+            "name": "_slotId",
+            "type": "uint8"
           }
         ],
-        "name": "register",
+        "name": "sellItem",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -289,6 +290,20 @@ export const environment = {
           }
         ],
         "name": "fight",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_username",
+            "type": "bytes12"
+          }
+        ],
+        "name": "register",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

@@ -24,15 +24,15 @@
                     <span [ngClass]="{'text-danger' : player.currentHealth / player.health < 0.3}">{{player.currentHealth | number}}</span> / {{player.health | number}}
                 </span>
             </td>
-            <td width="53" class="text-right cur-help">
+            <td width="53" class="text-right">
                 <i class="fa fa-heart icon"></i>
             </td>
         </tr>
     </table>
 </div>
 <div class="hero-items mt-4 mx-auto clearfix">
-    <div class="hero-item border" *ngFor="let item of player.items" matTooltipPosition="above" matTooltip="{{item ? getItemTooltip(item) : 'Empty item slot'}}">
-        <img *ngIf="item" src="./assets/images/items/{{item.type.toLowerCase()}}.gif" alt="{{item.type}}">
+    <div class="hero-item border" *ngFor="let item of player.items; index as i" matTooltipPosition="above" matTooltip="{{item ? getItemTooltip(item) : 'Empty item slot'}}">
+        <img *ngIf="item" src="./assets/images/items/{{item.type.toLowerCase()}}.gif" alt="{{item.type}}" class="cur-pointer" (click)="sellItem(i)">
     </div>
 
 </div>

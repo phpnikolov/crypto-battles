@@ -6,21 +6,25 @@
                 <img src="./assets/images/creatures/{{creatures[battle.cType].name.toLowerCase()}}.png" alt="{{creatures[battle.cType].name}}">
 
                 <ul class="list-group mt-2 creature-stats">
-                    <li class="mb-1"><small class="text-uppercase font-weight-bold">{{cCountList[battle.cCount].label}} of {{creatures[battle.cType].name}}s</small></li>
-                    <li>Damage: <span class="text-secondary">{{creatures[battle.cType].damage * cCountList[battle.cCount].min | number}} - {{creatures[battle.cType].damage * cCountList[battle.cCount].max | number}}</span></li>
-                    <li>Health: <span class="text-secondary">{{creatures[battle.cType].health * cCountList[battle.cCount].min | number}} - {{creatures[battle.cType].health * cCountList[battle.cCount].max | number}}</span></li>
+                    <li class="mb-1">
+                        <small class="text-uppercase font-weight-bold cur-help" matTooltip="{{cCountList[battle.cCount].min |number}} - {{cCountList[battle.cCount].max |number}} {{creatures[battle.cType].name.toLowerCase()}}s">
+                            {{cCountList[battle.cCount].label}} of {{creatures[battle.cType].name}}s
+                        </small>
+                    </li>
+                    <li>Damage: <span class="text-secondary">{{creatures[battle.cType].damage | number}}</span></li>
+                    <li>Health: <span class="text-secondary">{{creatures[battle.cType].health | number}}</span></li>
                 </ul>
 
                 <button class="btn btn-danger btn-sm attack" [disabled]="player.isDead || battlesInProgress[i]" (click)="attack(i)">Attack</button>
             </ng-template>
 
             <ng-template [ngIf]="pastBattles[i].round == player.round">
-                <img src="./assets/images/creatures/{{creatures[battle.cType].name.toLowerCase()}}.png" class="opacity-50" alt="{{creatures[battle.cType].name}}">
+                <img src="./assets/images/creatures/{{creatures[pastBattles[i].cType].name.toLowerCase()}}.png" class="opacity-50" alt="{{creatures[pastBattles[i].cType].name}}">
 
                 <ul class="list-group mt-2 creature-stats">
-                    <li class="mb-1"><small class="text-uppercase font-weight-bold text-success">{{pastBattles[i].units}} {{creatures[battle.cType].name}}s defeated</small></li>
-                    <li>Gold: <span class="text-secondary">{{creatures[battle.cType].gold * pastBattles[i].units | number}}</span></li>
-                    <li>Experience: <span class="text-secondary">{{creatures[battle.cType].experience * pastBattles[i].units | number}}</span></li>
+                    <li class="mb-1"><small class="text-uppercase font-weight-bold text-success">{{pastBattles[i].units}} {{creatures[pastBattles[i].cType].name}}s defeated</small></li>
+                    <li>Gold: <span class="text-secondary">{{creatures[pastBattles[i].cType].gold * pastBattles[i].units | number}}</span></li>
+                    <li>Experience: <span class="text-secondary">{{creatures[pastBattles[i].cType].experience * pastBattles[i].units | number}}</span></li>
                 </ul>
 
             </ng-template>

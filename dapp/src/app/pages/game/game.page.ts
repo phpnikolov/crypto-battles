@@ -50,6 +50,7 @@ export class GamePage {
 
     setInterval(() => {
       this.player.loadPlayer();
+      this.player.loadItems();
     }, 10000); // read the player every 10 sec
   }
 
