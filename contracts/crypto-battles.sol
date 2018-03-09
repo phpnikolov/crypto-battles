@@ -167,25 +167,25 @@ contract CryptoCreatures {
         
         if (_level <= 5) {
             /* Level 1-5
-             * Halfling - Several (25%)  - easy
-             * Pikeman - Few (25%) - easy
+             * Halfling - Several (20%)  - easy
+             * Pikeman - Few (20%) - easy
              * Rogue - Several (20%) - normal
-             * Nomad - Few (15%) - normal
-             * Halfling - Pack (15%) - normal
+             * Nomad - Few (20%) - normal
+             * Halfling - Pack (20%) - normal
              */
-            if (rand < 25) {
+            if (rand < 20) {
                 _cType = CreatureType.Halfling;
                 _cCount = CreatureCount.Several;
             }
-             else if (rand < 50) {
+             else if (rand < 40) {
                 _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Few;
             }
-            else if (rand < 70) {
+            else if (rand < 60) {
                 _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 85) {
+            else if (rand < 80) {
                 _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Few;
             }
@@ -196,21 +196,21 @@ contract CryptoCreatures {
         }
         else if (_level <= 10) {
             /* Level 5-10
-             * Rogue - Several (30%) - easy
+             * Rogue - Several (20%) - easy
              * Pikeman - Several (20%) - normal
              * Halfling - Pack (20%) - normal
-             * Nomad - Several (10%) - hard
+             * Nomad - Several (20%) - hard
              * Swordman - Few (20%) - normal
              */
             if (rand < 20) {
                 _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 50) {
+            else if (rand < 40) {
                 _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 70) {
+            else if (rand < 60) {
                 _cType = CreatureType.Halfling;
                 _cCount = CreatureCount.Pack;
             }
@@ -225,27 +225,27 @@ contract CryptoCreatures {
         }
         else if (_level <= 15) {
             /* Level 10-15
-             * Halfling - Pack (15%) - easy
-             * Pikeman - Several (15%) - easy
-             * Nomad - Several (25%) - normal
-             * Rogue - Pack (25%) - normal
+             * Halfling - Pack (20%) - easy
+             * Pikeman - Several (20%) - easy
+             * Nomad - Several (20%) - normal
+             * Rogue - Pack (20%) - normal
              * Swordman - Several (20%) - hard
              */
-            if (rand < 15) {
+            if (rand < 20) {
                 _cType = CreatureType.Halfling;
                 _cCount = CreatureCount.Pack;
             }
-            else if (rand < 30) {
+            else if (rand < 40) {
                 _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 55) {
+            else if (rand < 60) {
                 _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Several;
             }
             else if (rand < 80) {
                 _cType = CreatureType.Rogue;
-                _cCount = CreatureCount.Few;
+                _cCount = CreatureCount.Pack;
             }
             else {
                 _cType = CreatureType.Swordman;
@@ -558,6 +558,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
 
         uint deadOn; // round
     }
+    
+    // players unique usernames
+    mapping (bytes12 => bool) public usedUsernames;
 
     // all registered players
     mapping (address => Player) public players;
@@ -582,7 +585,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
 
     function register(bytes12 _username) public {
         require(isRegistered(msg.sender) == false);
+        require(usedUsernames[_username] == false);
 
+        usedUsernames[_username] = true;
         players[msg.sender] = Player({
             username: _username,
             registrationBlock: block.number,
