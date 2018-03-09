@@ -10,6 +10,7 @@ import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/fo
 export class PromptDialog {
 
   public fg: FormGroup;
+  public buttonsUsed:boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -22,17 +23,25 @@ export class PromptDialog {
     this.fg = fb.group({
       'answer': [this.data.defaultValue, this.data.validators]
     });
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (!this.buttonsUsed) {
+        this.data.reject();
+      }
+    });
   }
 
   get answer() { return this.fg.get('answer'); }
 
 
   public send(): void {
+    this.buttonsUsed = true;
     this.dialogRef.close();
     this.data.resolve(this.fg.get('answer').value);
   }
 
   public cancel(): void {
+    this.buttonsUsed = true;
     this.dialogRef.close();
     this.data.reject();
   }

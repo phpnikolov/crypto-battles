@@ -19,6 +19,7 @@ import { NotEnoughBalanceDialog } from '../dialogs/not-enough-balance/not-enough
 
 import { BigInteger } from 'big-integer';
 import * as bigInt from 'big-integer';
+import { Router } from '@angular/router';
 
 
 
@@ -29,12 +30,13 @@ export class WalletService {
   public readonly env = environment;
 
   public eth;
-  private ks;
+  public ks;
   private password;
   private transactions: Transaction[] = [];
   public gasPrice: BigInteger = bigInt(Utils.toWei(this.env.gasPrice, 'Gwei'));
 
   constructor(
+    private router: Router,
     private storage: StorageService,
     public dialogService: DialogService
 
@@ -141,16 +143,18 @@ export class WalletService {
   /** 
    * Prompt user to enter password
   */
-  private getUserPassword(): Promise<string> {
+  public getUserPassword(): Promise<string> {
     return new Promise((resolve, reject) => {
       if (typeof this.password !== 'undefined') {
         return resolve(this.password);
       }
 
-      this.dialogService.prompt('Enter your password to unlock', { inputType: 'password', disableClose: true }).then((password: string) => {
+      this.dialogService.prompt('Enter your password to unlock', { inputType: 'password' }).then((password: string) => {
         this.password = password;
         resolve(this.password);
-      }).catch(reject);
+      }).catch(() => {
+        this.router.navigate(['/login']);
+      });
     });
   }
 
@@ -166,6 +170,30 @@ export class WalletService {
     return _.find(this.transactions, ['txHash', txHash]);
   }
 
+  public getPasswordDerivedKey(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.getUserPassword().then((password: string) => {
+
+
+        this.ks.keyFromPassword(password, (err, pwDerivedKey) => {
+          if (err) {
+            return reject(err);
+          }
+
+          if (this.ks.isDerivedKeyCorrect(pwDerivedKey)) {
+            resolve(pwDerivedKey);
+          }
+          else {
+            // wrong password, try again
+            this.password = undefined;
+            this.dialogService.clearAlerts();
+            this.dialogService.addError('Wrong password');
+            this.getPasswordDerivedKey().then(resolve).catch(reject);
+          }
+        });
+      }).catch(reject);
+    });
+  }
 
 
   /** 
@@ -177,28 +205,9 @@ export class WalletService {
         return reject();
       }
 
-      this.getUserPassword().then((password: string) => {
-
-
-        this.ks.keyFromPassword(password, (err, pwDerivedKey) => {
-          if (err) {
-            return reject(err);
-          }
-
-          try {
-            let privateKey = this.ks.exportPrivateKey(this.address, pwDerivedKey);
-
-            // private key is unlocked
-            return resolve(privateKey);
-          }
-          catch (ex) {
-            // wrong password, try again
-            this.password = undefined;
-            this.dialogService.clearAlerts();
-            this.dialogService.addError('Wrong password');
-            this.getPrivateKey().then(resolve).catch(reject);
-          }
-        });
+      this.getPasswordDerivedKey().then((pwDerivedKey) => {
+        let privateKey = this.ks.exportPrivateKey(this.address, pwDerivedKey);
+        resolve(privateKey);
       }).catch(reject);
     });
   }

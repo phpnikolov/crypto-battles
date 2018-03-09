@@ -3,6 +3,7 @@
         <div class="d-flex flex-column flex-md-row align-items-center">
 
             <div class="mr-md-auto">
+                <a class="logo m-0 text-dark mr-2" [routerLink]="['/']" matTooltip="Go to home page">Crypto Battles</a>
                 <ng-template [ngIf]="player.isLoaded">
                     <span class="mx-2 cur-help" matTooltip="{{roundPassed | number:'0.0-1'}}% of the round has passed"><small class="text-uppercase">Round:</small> {{player.round | number}}</span>
                     <span class="mx-2"><small class="text-uppercase">Gold:</small> {{player.gold | number:'1.0-4'}}</span>
@@ -10,7 +11,7 @@
             </div>
 
             <nav class="m-2">
-                <button class="btn btn-primary btn-sm" (click)="showWallet()" title="View your wallet">
+                <button class="btn btn-primary btn-sm" (click)="showWallet()" matTooltip="View your wallet">
                     <i *ngIf="hasPendingTxs" class="fa fa-spinner fa-spin"></i>
                     Wallet
                 </button>

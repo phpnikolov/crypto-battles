@@ -15,6 +15,7 @@ import { Validators } from '@angular/forms';
 })
 export class GamePage {
 
+  public isUnlocked: boolean = false;
   constructor(
     private router: Router,
     public wallet: WalletService,
@@ -36,6 +37,7 @@ export class GamePage {
         }
         else {
           this.init();
+          this.isUnlocked = true;
         }
       });
     }).catch((err) => {

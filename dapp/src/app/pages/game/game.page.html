@@ -1,4 +1,4 @@
-<app-navbar *ngIf="wallet.address"></app-navbar>
+<app-navbar *ngIf="isUnlocked"></app-navbar>
 <div class="container mt-4" *ngIf="player.isLoaded">
     <div class="row">
         <div class="col-xl mb-4">

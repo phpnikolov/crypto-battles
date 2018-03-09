@@ -1,0 +1,26 @@
+<h1 class="h3 text-center mt-3">
+    <a [routerLink]="['/']" class="text-dark">Crypto Battles</a>
+</h1>
+<div class="card mx-auto mt-2 text-center" style="width: 350px;" *ngIf="wallet">
+    <img src="https://robohash.org/{{wallet.address}}?set=set2" class="m-auto d-block border-bottom border-secondary" *ngIf="wallet.address">
+    <div class="card-body">
+        <div *ngIf="wallet.address">
+            <h5 class="card-title">Is that you?</h5>
+            <p class="card-text"><small>{{wallet.address}}</small></p>
+
+            <button type="button" class="btn btn-light btn-block" (click)="showCreateWallet = true">No, that's not me</button>
+            <button type="button" class="btn btn-primary btn-block  mt-2" [routerLink]="['/game']">Yes, continue</button>
+        </div>
+
+        <div class="mt-4" *ngIf="showCreateWallet">
+            <p>
+                To get started, you need a wallet.
+                <br> If you are here for the first time,
+                <br>please click on <b>Create Wallet</b>.
+            </p>
+
+            <button type="button" class="btn btn-light btn-block" (click)="importMnemonic()">Import Mnemonic</button>
+            <button type="button" class="btn btn-primary mt-2 btn-block" [routerLink]="['/register']">Create Wallet</button>
+        </div>
+    </div>
+</div>

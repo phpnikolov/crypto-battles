@@ -1,8 +1,7 @@
-<h2 mat-dialog-title>Wallet</h2>
+<h2 mat-dialog-title>Wallet Balance <span class="text-success">{{balance | number:'1.0-4'}} ETH</span></h2>
 <mat-dialog-content>
-    <span>{{wallet.address}}</span><br />
-    <b class="text-success">{{balance | number:'1.0-4'}} ETH</b><br />
-    <ul class="list-group txs-list mt-3">
+    <label>Last transactions</label>
+    <ul class="list-group txs-list mt-0">
         <ng-template ngFor let-tx [ngForOf]="wallet.getTransactions()" let-i="index">
             <li class="list-group-item" [ngClass]="{'bg-secondary' : tx.status == 'pending', 'bg-success' : tx.status == 'confirmed', 'bg-danger' : tx.status == 'error'}">
                 <a href="https://ropsten.etherscan.io/tx/{{tx.txHash}}" class="text-white" target="_blank" tabindex="-1">
@@ -12,6 +11,8 @@
             </li>
         </ng-template>
     </ul>
+    <button type="button" class="btn btn-info btn-block mt-2" (click)="showAddress()" tabindex="-1">Show Address</button>
+    <button type="button" class="btn btn-info btn-block" (click)="showMnemonic()" tabindex="-1">Show Mnemonic</button>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close>Close</button>

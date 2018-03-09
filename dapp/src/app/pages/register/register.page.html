@@ -1,13 +1,14 @@
 <div class="container">
-    <h3 class="mt-5 mb-3">Create Wallet</h3>
-    <div class="card">
-        <div class="card-body">
+    <h1 class="h3 text-center mt-3"><a [routerLink]="['/']" class="text-dark">Crypto Battles</a></h1>
 
+    <div class="card mx-auto mt-2" style="max-width: 600px">
+        <div class="card-body">
+            <h5 class="card-title">Create Wallet</h5>
 
             <form (ngSubmit)="step = 2" *ngIf="step == 1">
 
                 <div class="form-group">
-                    <label>Mnemonic</label>
+                    <label>Generated mnemonic</label>
                     <input type="text" class="form-control" onclick="this.select()" value="{{seedPhrase}}" readonly>
                 </div>
                 <div class="form-group">
@@ -16,6 +17,7 @@
                 </div>
 
                 <button mat-raised-button color="warn" class="float-right" type="submit">I understand. Continue</button>
+                <button mat-raised-button [routerLink]="['/login']" class="float-right mr-2" t color="basic">Back</button>
             </form>
 
 

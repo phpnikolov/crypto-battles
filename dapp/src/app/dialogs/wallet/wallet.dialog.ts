@@ -7,6 +7,7 @@ import { Transaction } from '../../interfaces/transaction';
 
 import { BigInteger } from 'big-integer';
 import * as bigInt from 'big-integer';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-wallet',
@@ -19,13 +20,14 @@ export class WalletDialog {
 
   constructor(
     public dialogRef: MatDialogRef<WalletDialog>,
-    public wallet: WalletService
+    public wallet: WalletService,
+    private dialogService: DialogService
   ) {
     this.updateBalance();
 
     setInterval(() => {
       this.updateBalance();
-    }, 10000);
+    }, 13000);
 
   }
 
@@ -47,5 +49,19 @@ export class WalletDialog {
   public getFee(tx: Transaction): number {
     return this.wei2eter(bigInt(tx.gasPrice).times(tx.gasLimit).toString());
   }
+
+  public showMnemonic(): void {
+    this.wallet.getPasswordDerivedKey().then((pwDerivedKey) => {
+      let mnemonic = this.wallet.ks.getSeed(pwDerivedKey);
+      this.dialogService.prompt('Your mnemonic is', { defaultValue: mnemonic, disableClose: true });
+    }).catch(() => {
+
+    })
+  }
+
+  public showAddress(): void {
+    this.dialogService.prompt('Your address is', { defaultValue: this.wallet.address, disableClose: true });
+  }
+
 
 }

@@ -1,0 +1,30 @@
+.hero-container {
+    width: 200px;
+    display: inline-block;
+    position: relative;
+}
+
+.hero-container img {
+    width: 200px;
+    height: 200px;
+}
+
+.rank {
+    font-size: 1.2em;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.level {
+    position: absolute;
+    margin: -11px;
+    bottom: 0;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    background-color: white;
+    line-height: 1.4em;
+    text-align: center;
+    display: block;
+}

@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/fo
 import { Router } from '@angular/router';
 import { WalletService } from '../../services/wallet.service';
 import { keystore } from "eth-lightwallet";
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   templateUrl: './register.page.html',
@@ -17,7 +18,8 @@ export class RegisterPage {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    public wallet:WalletService
+    public wallet: WalletService,
+    private dialogService: DialogService
   ) {
 
 
@@ -46,15 +48,15 @@ export class RegisterPage {
   get confirmMnemonic() { return this.fg.get('confirmMnemonic'); }
   get password() { return this.fg.get('password'); }
   get confirmPassword() { return this.fg.get('confirmPassword'); }
-  
+
 
   public create() {
     this.wallet.saveKs(this.seedPhrase, this.fg.get('password').value).then(() => {
       // successfully registered, go to the game
-      this.router.navigate(['login']);
+      this.router.navigate(['/game']);
 
     }).catch((err) => {
-      console.error(err);
+      this.dialogService.addError(err);
     });
   }
 

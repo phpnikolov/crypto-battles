@@ -1,0 +1,12 @@
+<div class="text-center">
+    <ng-template ngFor let-player [ngForOf]="top10data" let-i="index">
+        <div class="hero-container m-2">
+            <div class="rank cur-help" matTooltip="Rank {{i+1}}">#{{i+1}}</div>
+            <img src="https://robohash.org/{{player.address}}?set=set2" alt="{{player.username}} avatar" class="m-auto d-block">
+            <h5 class="text-center border-top border-bottom pos-r border-secondary m-0 pt-1 pb-2">
+                {{player.username}}
+            </h5>
+            <small class="level rounded-circle border border-secondary cur-help" matTooltip="Level {{player.level}}">{{player.level}}</small>
+        </div>
+    </ng-template>
+</div>

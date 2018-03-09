@@ -3,16 +3,21 @@ export const environment = {
   gasPrice: '11.1', // in Gwei
   provider: 'https://ropsten.infura.io/rsndW2tOymHA1cBffVyN',
   contract: {
-    address: '0xacb076112d644562f0f8b35c303a32af6b6c4093',
+    address: '0x6cB75934f8eef840594680d120f9d63a9effb356',
     abi: [
       {
         "constant": true,
-        "inputs": [],
-        "name": "shop",
+        "inputs": [
+          {
+            "name": "",
+            "type": "bytes12"
+          }
+        ],
+        "name": "usedUsernames",
         "outputs": [
           {
             "name": "",
-            "type": "uint256[6]"
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -44,6 +49,90 @@ export const environment = {
           {
             "name": "experience",
             "type": "uint24"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getBattles",
+        "outputs": [
+          {
+            "name": "_cType0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount0",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount1",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount2",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount3",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount4",
+            "type": "uint8"
+          },
+          {
+            "name": "_cType5",
+            "type": "uint8"
+          },
+          {
+            "name": "_cCount5",
+            "type": "uint8"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getInfo",
+        "outputs": [
+          {
+            "name": "_round",
+            "type": "uint256"
+          },
+          {
+            "name": "_blockNumber",
+            "type": "uint256"
+          },
+          {
+            "name": "_currentHealth",
+            "type": "uint256"
+          },
+          {
+            "name": "_isDead",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -116,55 +205,39 @@ export const environment = {
       {
         "constant": true,
         "inputs": [],
-        "name": "getBattles",
+        "name": "getItems",
         "outputs": [
           {
-            "name": "_cType0",
-            "type": "uint8"
-          },
+            "name": "",
+            "type": "uint256[8]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "shop",
+        "outputs": [
           {
-            "name": "_cCount0",
-            "type": "uint8"
-          },
+            "name": "",
+            "type": "uint256[6]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "getPastBattles",
+        "outputs": [
           {
-            "name": "_cType1",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount1",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType2",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount2",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType3",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount3",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType4",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount4",
-            "type": "uint8"
-          },
-          {
-            "name": "_cType5",
-            "type": "uint8"
-          },
-          {
-            "name": "_cCount5",
-            "type": "uint8"
+            "name": "",
+            "type": "uint256[6]"
           }
         ],
         "payable": false,
@@ -184,60 +257,6 @@ export const environment = {
           {
             "name": "",
             "type": "bool"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "getInfo",
-        "outputs": [
-          {
-            "name": "_round",
-            "type": "uint256"
-          },
-          {
-            "name": "_blockNumber",
-            "type": "uint256"
-          },
-          {
-            "name": "_currentHealth",
-            "type": "uint256"
-          },
-          {
-            "name": "_isDead",
-            "type": "bool"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "getItems",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256[8]"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "getPastBattles",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256[6]"
           }
         ],
         "payable": false,
@@ -266,11 +285,19 @@ export const environment = {
         "constant": false,
         "inputs": [
           {
-            "name": "_username",
-            "type": "bytes12"
+            "name": "_damagePoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_healthPoints",
+            "type": "uint256"
+          },
+          {
+            "name": "_regenerationPoints",
+            "type": "uint256"
           }
         ],
-        "name": "register",
+        "name": "setPoints",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -292,8 +319,13 @@ export const environment = {
       },
       {
         "constant": false,
-        "inputs": [],
-        "name": "kill",
+        "inputs": [
+          {
+            "name": "_slotId",
+            "type": "uint8"
+          }
+        ],
+        "name": "sellItem",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -303,19 +335,20 @@ export const environment = {
         "constant": false,
         "inputs": [
           {
-            "name": "_damagePoints",
-            "type": "uint256"
-          },
-          {
-            "name": "_healthPoints",
-            "type": "uint256"
-          },
-          {
-            "name": "_regenerationPoints",
-            "type": "uint256"
+            "name": "_username",
+            "type": "bytes12"
           }
         ],
-        "name": "setPoints",
+        "name": "register",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "kill",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

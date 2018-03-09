@@ -58,24 +58,23 @@ export class CreaturesPage implements OnInit {
 
   public attack(creatureIdx: number) {
     this.battlesInProgress[creatureIdx] = true;
+    setTimeout(() => {
+      this.battlesInProgress[creatureIdx] = false;
+    }, 60000);
     this.contract.fight(creatureIdx)
       .then((tx: Transaction) => {
         tx.onChange = (tx: Transaction) => {
           if (tx.status === 'confirmed') {
             this.player.loadPlayer();
             this.creaturesService.load();
-            this.battlesInProgress[creatureIdx] = false;
-          }
-          if (tx.status === 'error') {
-            this.battlesInProgress[creatureIdx] = false;
           }
         }
 
         tx.onChange(tx);
       })
       .catch(err => {
-        this.battlesInProgress[creatureIdx] = false;
         this.dialogService.addError(err);
+        this.battlesInProgress[creatureIdx] = false;
       });
   }
 

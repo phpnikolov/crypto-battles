@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from "@angular/router";
 
 import { AppComponent } from './app.component';
-
+import { HttpClientModule } from '@angular/common/http';
 
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,6 +22,7 @@ import {
 // components
 import { AlertsComponent } from "./components/alerts/alerts.component";
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { Top10Component } from './components/top10/top10.component';
 
 // Services
 import { StorageService } from './services/storage.service';
@@ -41,6 +42,7 @@ import { CreaturesPage } from './pages/creatures/creatures.page';
 import { ShopPage } from './pages/shop/shop.page';
 import { RegisterPage } from './pages/register/register.page';
 import { DialogService } from './services/dialog.service';
+import { HomePage } from './pages/home/home.page';
 
 
 // dialogs
@@ -51,12 +53,10 @@ import { PointsDialog } from './dialogs/points/points.dialog';
 
 
 
-
 const appRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+    component: HomePage
   },
   {
     path: 'login',
@@ -96,12 +96,15 @@ StorageService.namespace = 'crypto-battles';
     CreaturesPage,
     ShopPage,
     PointsDialog,
+    Top10Component,
+    HomePage,
    
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
 
     RouterModule.forRoot(appRoutes, { enableTracing: false }),
 
