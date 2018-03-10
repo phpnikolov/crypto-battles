@@ -115,12 +115,11 @@ export class WalletService {
   get isUnlocked() { return this._isUnlocked; }
   public unlock(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this._isUnlocked) {
+      if (this.isUnlocked) {
         resolve();
         return;
       }
-      this.getPrivateKey().then(() => {
-        this._isUnlocked = true;
+      this.getPasswordDerivedKey().then(() => {
         resolve();
       }, reject);
 
@@ -177,15 +176,19 @@ export class WalletService {
 
         this.ks.keyFromPassword(password, (err, pwDerivedKey) => {
           if (err) {
+            this.password = undefined;
+            this._isUnlocked = false;
             return reject(err);
           }
 
           if (this.ks.isDerivedKeyCorrect(pwDerivedKey)) {
+            this._isUnlocked = true;
             resolve(pwDerivedKey);
           }
           else {
             // wrong password, try again
             this.password = undefined;
+            this._isUnlocked = false;
             this.dialogService.clearAlerts();
             this.dialogService.addError('Wrong password');
             this.getPasswordDerivedKey().then(resolve).catch(reject);

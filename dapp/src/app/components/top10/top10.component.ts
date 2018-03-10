@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DialogService } from '../../services/dialog.service';
 
@@ -7,7 +7,7 @@ import { DialogService } from '../../services/dialog.service';
   templateUrl: './top10.component.html',
   styleUrls: ['./top10.component.css']
 })
-export class Top10Component implements OnInit {
+export class Top10Component {
 
   public top10data: any[] = [];
 
@@ -16,13 +16,16 @@ export class Top10Component implements OnInit {
     private dialogService: DialogService
   ) { 
 
-    this.load();
-    setInterval(() => {
-      this.load();
-    }, 30000);
+    this.startAutoLoading();
   }
 
-  ngOnInit() {
+  public startAutoLoading() {
+    this.load();
+
+    // don't use setInterval, because if tab is inactive for long time, reload will be triggerer millions of times...
+    setTimeout(() => {
+      this.startAutoLoading();
+    }, 10 * 1300);
   }
 
   private load(): void {

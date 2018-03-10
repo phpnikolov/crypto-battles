@@ -26,20 +26,25 @@ export class ShopPage {
     public player: PlayerService
   ) {
 
-    this.load();
-
-    setInterval(() => {
-      this.load();
-    }, 10 * 1000);
+    this.startAutoLoading();
   }
 
   get isLoaded(): boolean {
     return (this.items.length > 0);
   }
 
+  public startAutoLoading() {
+    this.load();
+
+    // don't use setInterval, because if tab is inactive for long time, reload will be triggerer millions of times...
+    setTimeout(() => {
+      this.startAutoLoading();
+    }, 15 * 1000); // 15 sec
+  }
+
   public load() {
     if (!this.wallet.isUnlocked) {
-      //return;
+      return;
     }
 
 

@@ -23,12 +23,16 @@ export class WalletDialog {
     public wallet: WalletService,
     private dialogService: DialogService
   ) {
+    this.startAutoLoading();
+  }
+
+  public startAutoLoading() {
     this.updateBalance();
 
-    setInterval(() => {
-      this.updateBalance();
-    }, 13000);
-
+    // don't use setInterval, because if tab is inactive for long time, reload will be triggerer millions of times...
+    setTimeout(() => {
+      this.startAutoLoading();
+    }, 15 * 1000);
   }
 
   private wei2eter(wei: string) {

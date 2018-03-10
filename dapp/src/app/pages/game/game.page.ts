@@ -15,7 +15,6 @@ import { Validators } from '@angular/forms';
 })
 export class GamePage {
 
-  public isUnlocked: boolean = false;
   constructor(
     private router: Router,
     public wallet: WalletService,
@@ -30,30 +29,33 @@ export class GamePage {
       return;
     }
 
-    this.contract.isRegistered().then((registered: boolean) => {
-      this.wallet.unlock().then(() => {
+    this.wallet.unlock().then(() => {
+      this.contract.isRegistered().then((registered: boolean) => {
         if (!registered) {
           this.register();
         }
         else {
           this.init();
-          this.isUnlocked = true;
         }
-      });
-    }).catch((err) => {
-      this.dialogService.addError("Can't connect to Provider");
-    })
+      }).catch((err) => {
+        this.dialogService.addError("Can't connect to Provider");
+      })
+    });
   }
 
 
   private init() {
-    this.player.loadItems();
-    this.player.loadPlayer();
+    this.startAutoLoading();
+  }
 
-    setInterval(() => {
-      this.player.loadPlayer();
-      this.player.loadItems();
-    }, 10000); // read the player every 10 sec
+  private startAutoLoading() {
+    this.player.loadPlayer();
+    this.player.loadItems();
+
+    // don't use setInterval, because if tab is inactive for long time, reload will be triggerer millions of times...
+    setTimeout(() => {
+      this.startAutoLoading();
+    }, 14 * 1000); // 14 sec
   }
 
   private register() {

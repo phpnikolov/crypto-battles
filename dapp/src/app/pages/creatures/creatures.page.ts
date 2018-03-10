@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CreaturesService } from '../../services/creatures.service';
 import { ContractService } from '../../services/contract.service';
 import { DialogService } from '../../services/dialog.service';
@@ -10,7 +10,7 @@ import { PlayerService } from '../../services/player.service';
   templateUrl: './creatures.page.html',
   styleUrls: ['./creatures.page.css']
 })
-export class CreaturesPage implements OnInit {
+export class CreaturesPage {
 
   public battlesInProgress: { [cretureIdx: number]: boolean } = {};
 
@@ -47,13 +47,18 @@ export class CreaturesPage implements OnInit {
     private contract: ContractService,
     public player: PlayerService,
     public creaturesService: CreaturesService
-  ) { }
+  ) {
+    this. startAutoLoading();
+   }
 
-  ngOnInit() {
+
+  public startAutoLoading() {
     this.creaturesService.load();
-    setInterval(() => {
-      this.creaturesService.load();
-    }, 7500);
+
+    // don't use setInterval, because if tab is inactive for long time, reload will be triggerer millions of times...
+    setTimeout(() => {
+      this.startAutoLoading();
+    }, 16 * 1000); // 15 sec
   }
 
   public attack(creatureIdx: number) {

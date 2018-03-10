@@ -26,6 +26,9 @@ export class PlayerService {
     }
 
     public loadItems() {
+        if (!this.wallet.isUnlocked) {
+            return;
+        }
         this.contract.getItems()
             .then((data: string[]) => {
                 for (let i = 0; i < data.length; i++) {
@@ -43,7 +46,7 @@ export class PlayerService {
 
     public loadPlayer() {
         if (!this.wallet.isUnlocked) {
-            //return;
+            return;
         }
 
         this.contract.getPlayer()

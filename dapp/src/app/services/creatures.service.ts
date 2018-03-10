@@ -74,10 +74,8 @@ export class CreaturesService {
 
   public load() {
     if (!this.wallet.isUnlocked) {
-      //return;
+      return;
     }
-
-
 
     this.contract.getBattles()
       .then((battles) => {

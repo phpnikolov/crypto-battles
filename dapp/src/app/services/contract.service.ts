@@ -24,10 +24,12 @@ export class ContractService {
 
 
   public isRegistered() {
+    console.log('Is registered');
     return this.contract.methods.isRegistered(this.wallet.getAddress()).call({ from: this.wallet.getAddress() });
   }
 
   public register(username: string): Promise<Transaction> {
+    console.log('Registration');
     return new Promise((resolve, reject) => {
       let hexUsename = Utils.stringToHex(username.toLowerCase());
       let method = this.contract.methods.register(hexUsename);
@@ -50,6 +52,7 @@ export class ContractService {
 
 
   public getPlayer(): Promise<any> {
+    console.log('Get player');
     return new Promise((resolve, reject) => {
       this.contract.methods.players(this.wallet.getAddress()).call()
         .then(resolve).catch(reject);
@@ -57,6 +60,7 @@ export class ContractService {
   }
 
   public getInfo(): Promise<any> {
+    console.log('Get info');
     return new Promise((resolve, reject) => {
       this.contract.methods.getInfo().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
@@ -64,6 +68,7 @@ export class ContractService {
   }
 
   public getBattles(): Promise<any> {
+    console.log('Get cratures');
     return new Promise((resolve, reject) => {
       this.contract.methods.getBattles().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
@@ -71,6 +76,7 @@ export class ContractService {
   }
 
   public getPastBattles(): Promise<any> {
+    console.log('Get past battles');
     return new Promise((resolve, reject) => {
       this.contract.methods.getPastBattles().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
@@ -78,6 +84,7 @@ export class ContractService {
   }
 
   public fight(battleId: number): Promise<Transaction> {
+    console.log('Attack creature #' + (battleId + 1));
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.fight(battleId);
 
@@ -99,6 +106,7 @@ export class ContractService {
 
 
   public setPoints(damage: number, health: number, spirit: number): Promise<Transaction> {
+    console.log(`Set points`);
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.setPoints(damage, health, spirit);
 
@@ -114,6 +122,7 @@ export class ContractService {
   }
 
   public shop(): Promise<any> {
+    console.log('Load shop');
     return new Promise((resolve, reject) => {
       this.contract.methods.shop().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
@@ -121,6 +130,7 @@ export class ContractService {
   }
 
   public buyItem(itemId: number, round: number): Promise<any> {
+    console.log(`Buy item #${itemId}`);
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.buyItem(itemId, round);
           let tx: Transaction = {
@@ -135,6 +145,7 @@ export class ContractService {
   }
 
   public sellItem(slotId: number): Promise<any> {
+    console.log(`Sell item #${slotId}`);
     return new Promise((resolve, reject) => {
       let method = this.contract.methods.sellItem(slotId);
           let tx: Transaction = {
@@ -149,6 +160,7 @@ export class ContractService {
   }
 
   public getItems(): Promise<any> {
+    console.log('Get items');
     return new Promise((resolve, reject) => {
       this.contract.methods.getItems().call({ from: this.wallet.getAddress() })
         .then(resolve).catch(reject);
