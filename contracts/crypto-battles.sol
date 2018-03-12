@@ -15,7 +15,7 @@ contract Ownable {
 
 contract Zipper {
 
-    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) public pure returns(uint) {
+    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) internal pure returns(uint) {
         return 
             (uint(_p0) * 2**(0*24)) + // no byte offset
             (uint(_p1) * 2**(1*24)) + // left shift 24
@@ -24,7 +24,7 @@ contract Zipper {
             (uint(_p4) * 2**(4*24));
     }
     
-    function unzipUint24(uint _zipUint24)  public pure returns(uint24[5]) {
+    function unzipUint24(uint _zipUint24) internal pure returns(uint24[5]) {
         
         uint _p4 = _zipUint24 / 2**(4*24);
         _zipUint24 -= _p4 * 2**(4*24);
@@ -621,9 +621,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
 
     
-    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=50*(x+-+1)(x+%2B+18);+x+from+1+to+99
+    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=700x%5E2+-+700(x-1)%5E2;+from+2+to+5
     function getLevelSize(uint _level) private pure returns(uint) {
-        return (50 * (_level - 1) * (_level + 18));
+        return (700*_level^2);
     }
     
     function syncLevel(address _addr) private {
