@@ -15,40 +15,32 @@ contract Ownable {
 
 contract Zipper {
 
-    
-    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) internal pure returns(uint _zipUint16) {
-        // uint24 can hold 16,777,215
-        uint maxSize = 16777215;
-        _zipUint16 = 
-            (_p0 * maxSize**0) +
-            (_p1 * maxSize**1) + 
-            (_p2 * maxSize**2) + 
-            (_p3 * maxSize**3) + 
-            (_p4 * maxSize**4);
+    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) public pure returns(uint) {
+        return 
+            (uint(_p0) * 2**(0*24)) + // no byte offset
+            (uint(_p1) * 2**(1*24)) + // left shift 24
+            (uint(_p2) * 2**(2*24)) + // left shift 48
+            (uint(_p3) * 2**(3*24)) +
+            (uint(_p4) * 2**(4*24));
     }
     
-    function unzipUint24(uint _zipUint24)  internal pure returns(uint24[5]) {
-            // uint24 can hold 16,777,215
-            uint maxSize = 16777215;
-            
-            uint24 _p0 = uint24(_zipUint24 % maxSize);
-            _zipUint24 = (_zipUint24 - _p0) / maxSize;
-            
-            uint24 _p1 = uint24(_zipUint24 % maxSize);
-            _zipUint24 = (_zipUint24 - _p1) / maxSize;
-            
-            uint24 _p2 = uint24(_zipUint24 % maxSize);
-            _zipUint24 = (_zipUint24 - _p2) / maxSize;
-            
-            uint24 _p3 = uint24(_zipUint24 % maxSize);
-            _zipUint24 = (_zipUint24 - _p3) / maxSize;
-            
-            uint24 _p4 = uint24(_zipUint24 % maxSize);
-            _zipUint24 = (_zipUint24 - _p4) / maxSize;
-            
-            return [_p0, _p1, _p2, _p3, _p4];
-            
-        }
+    function unzipUint24(uint _zipUint24)  public pure returns(uint24[5]) {
+        
+        uint _p4 = _zipUint24 / 2**(4*24);
+        _zipUint24 -= _p4 * 2**(4*24);
+        
+        uint _p3 = _zipUint24 / 2**(3*24);
+        _zipUint24 -= _p3 * 2**(3*24);
+        
+        uint _p2 = _zipUint24 / 2**(2*24);
+        _zipUint24 -= _p2 * 2**(2*24);
+        
+        uint _p1 = _zipUint24 / 2**(1*24);
+        _zipUint24 -= _p1 * 2**(1*24);
+        
+        return [uint24(_zipUint24), uint24(_p1), uint24(_p2), uint24(_p3), uint24(_p4)];
+        
+    }
 }
 
 contract Random {
