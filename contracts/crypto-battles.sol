@@ -621,16 +621,17 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
 
     
-    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=700x%5E2+-+700(x-1)%5E2;+from+2+to+5
+    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=1000x%5E2+-+1000(x-1)%5E2;+from+2+to+99
     function getLevelSize(uint _level) private pure returns(uint) {
-        return (700*_level^2);
+        return (1000*_level^2);
     }
     
     function syncLevel(address _addr) private {
-        while (players[_addr].experience >= getLevelSize(players[_addr].level + 1)) {
-            players[_addr].level++;
-            players[_addr].points+=5;
-            
+        if (players[_addr].level < 100) {
+            while (players[_addr].experience >= getLevelSize(players[_addr].level + 1)) {
+                players[_addr].level++;
+                players[_addr].points+=5;
+            }
         }
     }
     
@@ -743,12 +744,6 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         // how many attacks are needed to defeat the creature
         uint attacksNeeded = ((creatureHealth - 1) / players[msg.sender].damage) + 1;
         
-        if (_battleId % 2 == 0) {
-            // on even _battleId, player attacks first
-            attacksNeeded -= 1;
-        }
-        
-        
         uint creatureDamageDone = attacksNeeded * creature.damage * units;
         
         uint heroHealth = getHealth(msg.sender);
@@ -806,8 +801,8 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     function getItemPrice(Item _item) private pure returns(uint24) {
         uint cumulativeStats = _item.damage + (_item.health / 5) + _item.regeneration;
         
-        // formula: http://www.wolframalpha.com/input/?i=50*x%2B(x%2F2)*x;+x+from+10+to+90
-        return uint24(50*cumulativeStats + ((cumulativeStats / 2) * cumulativeStats));
+        // formula: http://www.wolframalpha.com/input/?i=100x%2B2x%5E2;+x+from+10+to+500
+        return uint24(100*cumulativeStats + (2 * cumulativeStats * cumulativeStats));
     }
     
     // zip order - type, damage, health, regeneration, price
