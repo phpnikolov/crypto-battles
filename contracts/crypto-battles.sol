@@ -84,7 +84,8 @@ contract CryptoCreatures {
         Several,// 5–9
         Pack,	// 10–19
         Lots,	// 20–49
-        Horde	// 50–99
+        Horde,	// 50–99
+        Throng  // 100-249
         // max 255!!!
     }
     
@@ -160,9 +161,9 @@ contract CryptoCreatures {
         if (_level <= 5) {
             /* Level 1-5
              * Halfling - Several (20%)  - easy
-             * Pikeman - Few (20%) - easy
-             * Rogue - Several (20%) - normal
+             * Rogue - Several (20%) - easy
              * Nomad - Few (20%) - normal
+             * Pikeman - Several (20%) - normal
              * Halfling - Pack (20%) - normal
              */
             if (rand < 20) {
@@ -170,16 +171,16 @@ contract CryptoCreatures {
                 _cCount = CreatureCount.Several;
             }
              else if (rand < 40) {
-                _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Few;
-            }
-            else if (rand < 60) {
                 _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Several;
             }
-            else if (rand < 80) {
-                _cType = CreatureType.Nomad;
+            else if (rand < 60) {
+                _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Few;
+            }
+            else if (rand < 80) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Several;
             }
             else {
                 _cType = CreatureType.Halfling;
@@ -188,22 +189,22 @@ contract CryptoCreatures {
         }
         else if (_level <= 10) {
             /* Level 5-10
-             * Rogue - Several (20%) - easy
-             * Pikeman - Several (20%) - normal
-             * Halfling - Pack (20%) - normal
-             * Nomad - Several (20%) - hard
-             * Swordman - Few (20%) - normal
+             * Halfling - Pack (20%) - easy
+             * Pikeman - Several (20%) - easy
+             * Rogue - Pack (20%) - normal
+             * Nomad - Several (20%) - normal
+             * Pikeman - Pack (20%) - hard
              */
             if (rand < 20) {
-                _cType = CreatureType.Rogue;
-                _cCount = CreatureCount.Several;
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Pack;
             }
             else if (rand < 40) {
                 _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Several;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Halfling;
+                _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Pack;
             }
             else if (rand < 80) {
@@ -211,182 +212,183 @@ contract CryptoCreatures {
                 _cCount = CreatureCount.Several;
             }
             else {
-                _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Few;
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Pack;
             }
         }
         else if (_level <= 15) {
             /* Level 10-15
-             * Halfling - Pack (20%) - easy
-             * Pikeman - Several (20%) - easy
-             * Nomad - Several (20%) - normal
-             * Rogue - Pack (20%) - normal
-             * Swordman - Several (20%) - hard
+             * Rogue - Pack (20%) - easy
+             * Nomad - Several (20%) - easy
+             * Halfling - Lots (20%) - normal
+             * Pikeman - Pack (20%) - normal
+             * Rogue - Lots (20%) - hard
              */
             if (rand < 20) {
-                _cType = CreatureType.Halfling;
-                _cCount = CreatureCount.Pack;
-            }
-            else if (rand < 40) {
-                _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Several;
-            }
-            else if (rand < 60) {
-                _cType = CreatureType.Nomad;
-                _cCount = CreatureCount.Several;
-            }
-            else if (rand < 80) {
                 _cType = CreatureType.Rogue;
                 _cCount = CreatureCount.Pack;
             }
-            else {
-                _cType = CreatureType.Swordman;
+            else if (rand < 40) {
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Several;
+            }
+            else if (rand < 60) {
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Lots;
+            }
+            else if (rand < 80) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Pack;
+            }
+            else {
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Lots;
             }
         }
         else if (_level <= 20) {
             /* Level 15-20
-             * Cavalier	- Few (20%) - easy
-             * Rogue - Pack (20%) - easy
-             * Pikeman - Pack (20%) - normal
-             * Swordman - Several (20%) - normal
-             * Nomad - Pack (20%) - hard
+             * Halfling - Lots (20%) - easy
+             * Nomad - Pack (20%) - easy
+             * Rogue - Lots (20%) - normal
+             * Swordman - Pack (20%) - normal
+             * Pikeman - Lots (20%) - hard
+             
              */
             if (rand < 20) {
-                _cType = CreatureType.Cavalier;
-                _cCount = CreatureCount.Few;
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Lots;
             }
             else if (rand < 40) {
-                _cType = CreatureType.Rogue;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Pack;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Lots;
             }
             else if (rand < 80) {
                 _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Several;
+                _cCount = CreatureCount.Pack;
             }
             else {
-                _cType = CreatureType.Nomad;
+                _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Pack;
             }
         }
         else if (_level <= 30) {
             /* Level 20-30
-             * Pikeman - Pack (20%) - easy
-             * Swordman - Several (20%) - easy
-             * Halfling - Lots (20%) - normal
-             * Cavalier - Several (20%) - hard
-             * Rogue - Lots (20%) - hard
+             * Rogue - Lots (20%) - easy
+             * Swordman - Pack (20%) - easy
+             * Pikeman - Lots (20%) - normal
+             * Cavalier - Pack (20%) - normal
+             * Nomad - Lots (20%) - hard
              */
             if (rand < 20) {
-                _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Lots;
             }
             else if (rand < 40) {
                 _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Several;
+                _cCount = CreatureCount.Pack;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Halfling;
+                _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Lots;
             }
             else if (rand < 80) {
                 _cType = CreatureType.Cavalier;
-                _cCount = CreatureCount.Several;
+                _cCount = CreatureCount.Pack;
             }
             else {
-                _cType = CreatureType.Rogue;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Lots;
             }
         }
         else if (_level <= 40) {
             /* Level 30-40
-             * Halfling - Lots (20%) - easy
-             * Nomad - Pack (20%) - easy
-             * Rogue - Lots (20%) - normal
-             * Pikeman - Lots (20%) - hard
-             * Swordman - Pack (20%) - hard
+             * Rogue - Horde (20%) - easy
+             * Cavalier - Pack (20%) - easy
+             * Nomad - Lots (20%) - normal
+             * Halfling - Throng (20%) - hard
+             * Pikeman - Horde (20%) - hard
              */
             if (rand < 20) {
-                _cType = CreatureType.Halfling;
-                _cCount = CreatureCount.Lots;
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Horde;
             }
             else if (rand < 40) {
-                _cType = CreatureType.Nomad;
+                _cType = CreatureType.Cavalier;
                 _cCount = CreatureCount.Pack;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Rogue;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Lots;
             }
             else if (rand < 80) {
-                _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Lots;
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Throng;
             }
             else {
-                _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Horde;
             }
         }
         else if (_level <= 50) {
             /* Level 40-50
-             * Rogue - Lots (20%) - easy
-             * Pikeman - Lots (20%) - normal
-             * Swordman - Pack (20%) - normal
-             * Halfling - Horde (20%) - normal
-             * Cavalier - Pack (20%) - hard
+             * Rogue - Horde (20%) - easy
+             * Nomad - Lots (20%) - easy
+             * Halfling - Throng (20%) - normal
+             * Pikeman - Horde (20%) - normal
+             * Cavalier - Lots (20%) - hard
              */
             if (rand < 20) {
                 _cType = CreatureType.Rogue;
-                _cCount = CreatureCount.Lots;
+                _cCount = CreatureCount.Horde;
             }
             else if (rand < 40) {
-                _cType = CreatureType.Pikeman;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Lots;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Halfling;
+                _cCount = CreatureCount.Throng;
             }
             else if (rand < 80) {
-                _cType = CreatureType.Halfling;
+                _cType = CreatureType.Pikeman;
                 _cCount = CreatureCount.Horde;
             }
             else {
                 _cType = CreatureType.Cavalier;
-                _cCount = CreatureCount.Pack;
+                _cCount = CreatureCount.Lots;
             }
         }
         else if (_level <= 65) {
             /* Level 50-65
-             * Pikeman - Lots (20%) - easy
-             * Swordman - Pack (20%) - easy
-             * Halfling - Horde (20%) - normal
-             * Cavalier - Pack (20%) - normal
-             * Nomad - Lots (20%) - hard
+             * Pikeman - Horde (20%) - easy
+             * Swordman - Lots (20%) - easy
+             * Halfling - Throng (20%) - normal
+             * Nomad - Horde (20%) - normal
+             * Rogue - Throng (20%) - hard
              */
             if (rand < 20) {
                 _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Lots;
+                _cCount = CreatureCount.Horde;
             }
             else if (rand < 40) {
                 _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Pack;
+                _cCount = CreatureCount.Lots;
             }
             else if (rand < 60) {
                 _cType = CreatureType.Halfling;
-                _cCount = CreatureCount.Horde;
+                _cCount = CreatureCount.Throng;
             }
             else if (rand < 80) {
-                _cType = CreatureType.Cavalier;
-                _cCount = CreatureCount.Pack;
+                _cType = CreatureType.Nomad;
+                _cCount = CreatureCount.Horde;
             }
             else {
-                _cType = CreatureType.Nomad;
-                _cCount = CreatureCount.Lots;
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Throng;
             }
         }
         else if (_level <= 80) {
@@ -418,49 +420,63 @@ contract CryptoCreatures {
                 _cCount = CreatureCount.Horde;
             }
         }
-        else {
+        else if (_level < 99){
             /* Level > 80
-             * Halfling - Horde (15%) - easy
-             * Rogue - Horde (10%) - easy
-             * Pikeman - Horde (15%) - normal
-             * Nomad - Lots (15%) - normal
-             * Nomad - Horde (10%) - hard
-             * Swordman - Lots (15%) - normal
-             * Swordman - Horde (5%) - imppossible
-             * Cavalier	- Lots (10%) - hard
-             * Cavalier - Horde (5%) - imppossible
+             * Rogue - Throng (20%) - easy
+             * Nomad - Horde (20%) - easy
+             * Pikeman - Throng (20%) - normal
+             * Swordman - Horde (20%) - normal
+             * Cavalier - Horde (20%) - hard
              */
-            if (rand < 15) {
-                _cType = CreatureType.Halfling;
-                _cCount = CreatureCount.Horde;
-            }
-            else if (rand < 25) {
+            if (rand < 20) {
                 _cType = CreatureType.Rogue;
-                _cCount = CreatureCount.Horde;
+                _cCount = CreatureCount.Throng;
             }
             else if (rand < 40) {
-                _cType = CreatureType.Pikeman;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Horde;
             }
-            else if (rand < 55) {
-                _cType = CreatureType.Nomad;
-                _cCount = CreatureCount.Lots;
+            else if (rand < 60) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Throng;
             }
-            else if (rand < 65) {
+            else if (rand < 80) {
+                _cType = CreatureType.Swordman;
+                _cCount = CreatureCount.Horde;
+            }
+            else {
+                _cType = CreatureType.Cavalier;
+                _cCount = CreatureCount.Horde;
+            }
+        }
+        else {
+             /* Level > 80
+             * Rogue - Throng (10%) - easy
+             * Pikeman - Throng (10%) - easy
+             * Nomad - Throng (20%) - normal
+             * Cavalier - Horde (20%) - normal
+             * Swordman - Throng (20%) - hard
+             * Cavalier - Throng (20%) - impossible
+             */
+            if (rand < 10) {
+                _cType = CreatureType.Rogue;
+                _cCount = CreatureCount.Throng;
+            }
+            else if (rand < 20) {
+                _cType = CreatureType.Pikeman;
+                _cCount = CreatureCount.Throng;
+            }
+            else if (rand < 40) {
                 _cType = CreatureType.Nomad;
+                _cCount = CreatureCount.Throng;
+            }
+            else if (rand < 60) {
+                _cType = CreatureType.Cavalier;
                 _cCount = CreatureCount.Horde;
             }
             else if (rand < 80) {
                 _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Lots;
-            }
-            else if (rand < 85) {
-                _cType = CreatureType.Swordman;
-                _cCount = CreatureCount.Horde;
-            }
-            else if (rand < 95) {
-                _cType = CreatureType.Cavalier;
-                _cCount = CreatureCount.Lots;
+                _cCount = CreatureCount.Throng;
             }
             else {
                 _cType = CreatureType.Cavalier;
@@ -566,6 +582,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     // player past battles (creature id => zipUint24) - round, cType, units
     mapping (address => uint[6]) private pastBattles;
     
+    // control game speed for development purposes. Normal speed is 1
+    uint private gameSpeed = 10;
+    
     modifier isPlayer() {
         require(isRegistered(msg.sender) == true);
         _;
@@ -573,7 +592,11 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
   
     function isRegistered(address _addr) public view returns(bool) {
         return players[_addr].lastSynced > 0;
-    } 
+    }
+    
+    function getBlockNumber() private view returns(uint) {
+        return block.number * gameSpeed;
+    }
 
     function register(bytes12 _username) public {
         require(isRegistered(msg.sender) == false);
@@ -582,16 +605,16 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         usedUsernames[_username] = true;
         players[msg.sender] = Player({
             username: _username,
-            registrationBlock: block.number,
-            lastSynced: block.number,
+            registrationBlock: getBlockNumber(),
+            lastSynced: getBlockNumber(),
             level: 1,
             gold: 1000,
             experience: 0,
             
             points: 0,
             
-            currentHealth: 100,
-            damage: 35,
+            currentHealth: 200,
+            damage: 50,
             health : 100,
             regeneration: 10, // 10 health per 10 blocks (1 health per block)
 
@@ -606,14 +629,14 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         bool _isDead
         ) {
             _round = getRound(msg.sender);
-            _blockNumber = block.number;
+            _blockNumber = getBlockNumber();
             _currentHealth = getHealth(msg.sender);
             _isDead = isDead(msg.sender);
         }
 
     // new round every 500 blocks (~2h)
     function getRound(address _addr) private view returns(uint) {
-        return 1 + (block.number - players[_addr].registrationBlock) / 500;
+        return 1 + (getBlockNumber() - players[_addr].registrationBlock) / 500;
     }
     
     function isDead(address _addr) private view returns(bool) {
@@ -639,7 +662,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         if (isDead(_addr)) {
             return 0;
         }
-        uint notSyncedBlocks = (block.number - players[_addr].lastSynced);
+        uint notSyncedBlocks = (getBlockNumber() - players[_addr].lastSynced);
         uint notSyncedHealth =  notSyncedBlocks * players[_addr].regeneration / 10;
         
         if (players[_addr].currentHealth + notSyncedHealth > players[_addr].health) {
@@ -755,9 +778,6 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             players[msg.sender].experience += creature.experience * units;
             
             syncLevel(msg.sender); // update users level after experience gain
-       
-            // save Battle
-            pastBattles[msg.sender][_battleId] = zipUint24(uint24(round), uint24(cType), uint24(units),  0, 0);
         }
         else {
              // players will be dead until next round
@@ -765,8 +785,12 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             heroHealth = 0;
         }
         
+        // save Battle - round, creature type, units count, win(1)/lost(0)
+        pastBattles[msg.sender][_battleId] = zipUint24(uint24(round), uint24(cType), uint24(units), (heroHealth > 0 ? 1 : 0), 0);
+        
+        // sync hero health
         players[msg.sender].currentHealth = heroHealth;
-        players[msg.sender].lastSynced = block.number;
+        players[msg.sender].lastSynced = getBlockNumber();
     }
     
     function setPoints(uint _damagePoints, uint _healthPoints, uint _regenerationPoints) isPlayer public {
@@ -777,7 +801,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
   
         // sync health before adding new regeneration points
         players[msg.sender].currentHealth = getHealth(msg.sender);
-        players[msg.sender].lastSynced = block.number;
+        players[msg.sender].lastSynced = getBlockNumber();
         
         players[msg.sender].points -= usedPoints;
         
