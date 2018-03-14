@@ -5,10 +5,10 @@
 
 export const environment = {
   production: false,
-  provider: 'https://ropsten.infura.io/rsndW2tOymHA1cBffVyN',
-  gasPrice: '11.1', // in Gwei
+  provider: 'http://127.0.0.1:8545',
+  gasPrice: '0', // in Gwei
   contract: {
-    address: '0x6cb75934f8eef840594680d120f9d63a9effb356',
+    address: '0x8cdaf0cd259887258bc13a92c0a6da92698644c0',
     abi: [
       {
         "constant": true,

@@ -175,7 +175,7 @@ contract CryptoCreatures {
                 _cCount = CreatureCount.Several;
             }
             else if (rand < 60) {
-                _cType = CreatureType.Rogue;
+                _cType = CreatureType.Nomad;
                 _cCount = CreatureCount.Few;
             }
             else if (rand < 80) {
@@ -272,7 +272,7 @@ contract CryptoCreatures {
             }
             else {
                 _cType = CreatureType.Pikeman;
-                _cCount = CreatureCount.Pack;
+                _cCount = CreatureCount.Lots;
             }
         }
         else if (_level <= 30) {
@@ -421,7 +421,7 @@ contract CryptoCreatures {
             }
         }
         else if (_level < 99){
-            /* Level > 80
+            /* Level 81-99
              * Rogue - Throng (20%) - easy
              * Nomad - Horde (20%) - easy
              * Pikeman - Throng (20%) - normal
@@ -450,7 +450,7 @@ contract CryptoCreatures {
             }
         }
         else {
-             /* Level > 80
+             /* Level = 99
              * Rogue - Throng (10%) - easy
              * Pikeman - Throng (10%) - easy
              * Nomad - Throng (20%) - normal
@@ -583,7 +583,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     mapping (address => uint[6]) private pastBattles;
     
     // control game speed for development purposes. Normal speed is 1
-    uint private gameSpeed = 10;
+    uint private gameSpeed = 5;
     
     modifier isPlayer() {
         require(isRegistered(msg.sender) == true);
@@ -615,7 +615,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             
             currentHealth: 200,
             damage: 50,
-            health : 100,
+            health : 200,
             regeneration: 10, // 10 health per 10 blocks (1 health per block)
 
             deadOn: 0
@@ -644,9 +644,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
 
     
-    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=1000x%5E2+-+1000(x-1)%5E2;+from+2+to+99
+    // How many experience is needed for a certain level http://www.wolframalpha.com/input/?i=(1000x%5E2+-+2000)+-+(1000(x-1)%5E2+-+2000);+from+2+to+99
     function getLevelSize(uint _level) private pure returns(uint) {
-        return (1000*_level^2);
+        return (1000*_level*_level - 2000);
     }
     
     function syncLevel(address _addr) private {

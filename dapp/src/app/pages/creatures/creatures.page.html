@@ -22,7 +22,11 @@
                 <img src="./assets/images/creatures/{{creatures[pastBattles[i].cType].name.toLowerCase()}}.png" class="opacity-50" alt="{{creatures[pastBattles[i].cType].name}}">
 
                 <ul class="list-group mt-2 creature-stats">
-                    <li class="mb-1"><small class="text-uppercase font-weight-bold text-success">{{pastBattles[i].units}} {{creatures[pastBattles[i].cType].name}}s defeated</small></li>
+                    <li class="mb-1">
+                        <small *ngIf="pastBattles[i].isVictory" class="text-uppercase font-weight-bold text-success">Victory</small>
+                        <small *ngIf="!pastBattles[i].isVictory" class="text-uppercase font-weight-bold text-damger">Defeat</small>
+                    </li>
+                    <li>Units: <span class="text-secondary">{{pastBattles[i].units | number}} {{creatures[pastBattles[i].cType].name}}s</span></li>
                     <li>Gold: <span class="text-secondary">{{creatures[pastBattles[i].cType].gold * pastBattles[i].units | number}}</span></li>
                     <li>Experience: <span class="text-secondary">{{creatures[pastBattles[i].cType].experience * pastBattles[i].units | number}}</span></li>
                 </ul>

@@ -16,48 +16,48 @@ export class CreaturesService {
       name: "Halfling",
       damage: 2,
       health: 11,
-      gold: 20, 
-      experience: 55 
+      gold: 20,
+      experience: 55
     },
     2: {
       name: "Rogue",
       damage: 4,
       health: 11,
-      gold: 40, 
-      experience: 55 
+      gold: 40,
+      experience: 55
     },
     3: {
       name: "Pikeman",
       damage: 4,
       health: 23,
-      gold: 40, 
-      experience: 115 
+      gold: 40,
+      experience: 115
     },
     4: {
       name: "Nomad",
       damage: 5,
       health: 38,
-      gold: 50, 
-      experience: 190 
+      gold: 50,
+      experience: 190
     },
     5: {
       name: "Swordman",
       damage: 12,
       health: 33,
-      gold: 120, 
-      experience: 165 
+      gold: 120,
+      experience: 165
     },
     6: {
       name: "Cavalier",
       damage: 10,
       health: 77,
-      gold: 100, 
-      experience: 385 
+      gold: 100,
+      experience: 385
     }
   };
 
   private _battles: { cType: number, cCount: number }[] = [];
-  private _pastBattles: { round: number, cType: number, units: number | undefined }[] = [];
+  private _pastBattles: { round: number, cType: number, units: number, isVictory: boolean }[] = [];
 
   public constructor(
     private wallet: WalletService,
@@ -100,7 +100,8 @@ export class CreaturesService {
           this._pastBattles[i] = {
             round: params[0],
             cType: params[1],
-            units: params[2]
+            units: params[2],
+            isVictory: !!params[3],
           };
 
 

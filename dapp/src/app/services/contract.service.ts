@@ -93,7 +93,7 @@ export class ContractService {
           let tx: Transaction = {
             label: 'Attack creature #' + (battleId + 1),
             to: this.env.contract.address,
-            gasLimit: Math.ceil(gasAmount * 1.5),
+            gasLimit: Math.ceil(gasAmount * 2),
             data: method.encodeABI()
           };
 

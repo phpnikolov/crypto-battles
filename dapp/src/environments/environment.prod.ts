@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  gasPrice: '11.1', // in Gwei
+  gasPrice: '5.5', // in Gwei
   provider: 'https://ropsten.infura.io/rsndW2tOymHA1cBffVyN',
   contract: {
-    address: '0x6cB75934f8eef840594680d120f9d63a9effb356',
+    address: '0xd3ce98c8f22e41b23f5be0b805bfee2d2aa11bcb',
     abi: [
       {
         "constant": true,

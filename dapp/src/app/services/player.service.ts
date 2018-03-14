@@ -39,7 +39,6 @@ export class PlayerService {
             })
             .catch(err => {
                 this.dialogService.addError("Can't connect to Provider");
-                console.error(err);
             })
     }
 
@@ -71,7 +70,14 @@ export class PlayerService {
     }
 
     public getLevelSize(lvl: number): number {
-        return (50 * (lvl - 1) * (lvl + 18));
+        if (lvl <= 1) {
+            return 0;
+        }
+        if (lvl > 99) {
+            lvl = 99;
+
+        }
+        return 1000 * lvl * lvl - 2000;
     }
 
     get address(): string {
