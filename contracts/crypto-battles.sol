@@ -15,31 +15,21 @@ contract Ownable {
 
 contract Zipper {
 
-    function zipUint24(uint24 _p0, uint24 _p1, uint24 _p2, uint24 _p3, uint24 _p4) internal pure returns(uint) {
-        return 
-            (uint(_p0) * 2**(0*24)) + // no byte offset
-            (uint(_p1) * 2**(1*24)) + // left shift 24
-            (uint(_p2) * 2**(2*24)) + // left shift 48
-            (uint(_p3) * 2**(3*24)) +
-            (uint(_p4) * 2**(4*24));
+    function zipUint32(uint32[8] params) internal pure returns(uint _uint32Zip) {
+        for (uint i = 0; i < 8; i++) {
+            _uint32Zip += uint(params[i]) * 2**(i*32); // left shift 32
+        }
     }
     
-    function unzipUint24(uint _zipUint24) internal pure returns(uint24[5]) {
-        
-        uint _p4 = _zipUint24 / 2**(4*24);
-        _zipUint24 -= _p4 * 2**(4*24);
-        
-        uint _p3 = _zipUint24 / 2**(3*24);
-        _zipUint24 -= _p3 * 2**(3*24);
-        
-        uint _p2 = _zipUint24 / 2**(2*24);
-        _zipUint24 -= _p2 * 2**(2*24);
-        
-        uint _p1 = _zipUint24 / 2**(1*24);
-        _zipUint24 -= _p1 * 2**(1*24);
-        
-        return [uint24(_zipUint24), uint24(_p1), uint24(_p2), uint24(_p3), uint24(_p4)];
-        
+    function unzipUint32(uint _uint32Zip) internal pure returns(uint32[8] _params) {
+        uint offset;
+        uint p = 8;
+        while (p > 0) {
+            p--;
+            offset = 2**(p*32);
+            _params[p] = uint32(_uint32Zip / offset);
+            _uint32Zip -= _params[p] * offset;
+        }
     }
 }
 
@@ -613,9 +603,9 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
             
             points: 0,
             
-            currentHealth: 200,
+            currentHealth: 500,
             damage: 50,
-            health : 200,
+            health : 500,
             regeneration: 10, // 10 health per 10 blocks (1 health per block)
 
             deadOn: 0
@@ -749,7 +739,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         uint round = getRound(msg.sender);
         
         // check if this creature is attacked this round
-        uint24[5] memory _pastBattle = unzipUint24(pastBattles[msg.sender][_battleId]);
+        uint32[8] memory _pastBattle = unzipUint32(pastBattles[msg.sender][_battleId]);
         
         require(_pastBattle[0] < round);
   
@@ -786,7 +776,13 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         }
         
         // save Battle - round, creature type, units count, win(1)/lost(0)
-        pastBattles[msg.sender][_battleId] = zipUint24(uint24(round), uint24(cType), uint24(units), (heroHealth > 0 ? 1 : 0), 0);
+        pastBattles[msg.sender][_battleId] = zipUint32([
+            uint32(round), 
+            uint32(cType), 
+            uint32(units), 
+            heroHealth > 0 ? 1 : 0,
+            0, 0, 0, 0
+        ]);
         
         // sync hero health
         players[msg.sender].currentHealth = heroHealth;
@@ -806,7 +802,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         players[msg.sender].points -= usedPoints;
         
         players[msg.sender].damage += _damagePoints * 1;
-        players[msg.sender].health += _healthPoints * 5;
+        players[msg.sender].health += _healthPoints * 10;
         
         players[msg.sender].regeneration += _regenerationPoints;
     }
@@ -814,12 +810,12 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     
     function getItem(address _addr, uint _round, uint8 _itemId) private view returns(Item) {
         // next generation item every 5 lvls
-        uint8 level = 5 + ((players[_addr].level / 5) * 5);
+        uint8 itemLevel = 5 + players[_addr].level;
         
         // this random will change every 100 blocks or level change
-        uint staticRand = uint256(keccak256(_itemId, _round, _addr, level));
+        uint staticRand = uint256(keccak256(_itemId, _round, _addr, itemLevel));
     
-        return generateItem(level, staticRand);
+        return generateItem(itemLevel, staticRand);
     }
     
     function getItemPrice(Item _item) private pure returns(uint24) {
@@ -830,51 +826,22 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
     }
     
     // zip order - type, damage, health, regeneration, price
-    function shop() isPlayer public view returns(uint[6]) {
+    function shop() isPlayer public view returns(uint[6] _items) {
         uint round = getRound(msg.sender);
 
         Item memory item;
         
-        uint zip0;
-        uint zip1;
-        uint zip2;
-        uint zip3;
-        uint zip4;
-        uint zip5;
-        
-        // check if this item is already purchased
-        if (purchasedOn[msg.sender][0] != round) {
+        for (uint i = 0; i < 6; i++) {
             item =  getItem(msg.sender, round, 0);
-            zip0 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
+            _items[i] = zipUint32([
+                uint32(item.iType), 
+                item.damage, 
+                item.health, 
+                item.regeneration, 
+                getItemPrice(item),
+                0,0,0
+            ]);
         }
-        
-        if (purchasedOn[msg.sender][1] != round) {
-            item =  getItem(msg.sender, round, 1);
-            zip1 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
-        }
-        
-        if (purchasedOn[msg.sender][2] != round) {
-            item =  getItem(msg.sender, round, 2);
-            zip2 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
-        }
-        
-        if (purchasedOn[msg.sender][3] != round) {
-            item =  getItem(msg.sender, round, 3);
-            zip3 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
-        }
-        
-        if (purchasedOn[msg.sender][4] != round) {
-            item =  getItem(msg.sender, round, 4);
-            zip4 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
-        }
-        
-        if (purchasedOn[msg.sender][5] != round) {
-            item =  getItem(msg.sender, round, 5);
-            zip5 = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, getItemPrice(item));
-        }
-
-        
-        return [zip0, zip1, zip2, zip3, zip4, zip5];
     }
     
    function buyItem(uint8 _itemId, uint _round) isPlayer public {
@@ -906,7 +873,13 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
                 players[msg.sender].regeneration += item.regeneration;
                 
                 
-                items[msg.sender][i] = zipUint24(uint24(item.iType), item.damage, item.health, item.regeneration, 0);
+                items[msg.sender][i] = zipUint32([
+                    uint32(item.iType), 
+                    item.damage, 
+                    item.health, 
+                    item.regeneration,
+                    0, 0, 0, 0
+                ]);
                 purchasedOn[msg.sender][_itemId] = round;
                 break;
             }
@@ -918,7 +891,7 @@ contract CryptoBattles is Ownable, CryptoCreatures, CryptoItems, Random, Zipper 
         
         require(items[msg.sender][_slotId] > 0);
         
-        uint24[5] memory itemStats = unzipUint24(items[msg.sender][_slotId]);
+        uint32[8] memory itemStats = unzipUint32(items[msg.sender][_slotId]);
         Item memory item = Item({
            iType: ItemType(itemStats[0]),
            damage: uint16(itemStats[1]),
